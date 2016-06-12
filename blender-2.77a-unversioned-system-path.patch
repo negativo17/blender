@@ -1,0 +1,25 @@
+diff -Naur blender-2.77a.old/intern/ghost/intern/GHOST_SystemPathsUnix.cpp blender-2.77a/intern/ghost/intern/GHOST_SystemPathsUnix.cpp
+--- blender-2.77a.old/intern/ghost/intern/GHOST_SystemPathsUnix.cpp	2016-06-12 14:16:58.594447448 +0200
++++ blender-2.77a/intern/ghost/intern/GHOST_SystemPathsUnix.cpp	2016-06-12 14:23:19.187950590 +0200
+@@ -61,6 +61,9 @@
+ 
+ const GHOST_TUns8 *GHOST_SystemPathsUnix::getSystemDir(int, const char *versionstr) const
+ {
++	/* ignore versionstr when building the system path */
++	versionstr = "";
++
+ 	/* no prefix assumes a portable build which only uses bundled scripts */
+ 	if (static_path) {
+ 		static string system_path = string(static_path) + "/blender/" + versionstr;
+diff -Naur blender-2.77a.old/source/creator/CMakeLists.txt blender-2.77a/source/creator/CMakeLists.txt
+--- blender-2.77a.old/source/creator/CMakeLists.txt	2016-06-12 14:19:09.524028635 +0200
++++ blender-2.77a/source/creator/CMakeLists.txt	2016-06-12 14:22:41.847214442 +0200
+@@ -281,7 +281,7 @@
+ 		if(WITH_INSTALL_PORTABLE)
+ 			set(TARGETDIR_VER ${BLENDER_VERSION})
+ 		else()
+-			set(TARGETDIR_VER share/blender/${BLENDER_VERSION})
++			set(TARGETDIR_VER share/blender)
+ 		endif()
+ 	endif()
+ 

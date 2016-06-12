@@ -1,20 +1,6 @@
-From: "Matteo F. Vescovi" <mfv@debian.org>
-Date: Thu, 9 Jul 2015 22:43:20 +0200
-Subject: update_manpages
-
-* Add blenderplayer manpage.
-* Install blenderplayer manpage to appropriate location.
----
- doc/manpage/blenderplayer.1   | 131 ++++++++++++++++++++++++++++++++++++++++++
- source/creator/CMakeLists.txt |   5 ++
- 2 files changed, 136 insertions(+)
- create mode 100644 doc/manpage/blenderplayer.1
-
-diff --git a/doc/manpage/blenderplayer.1 b/doc/manpage/blenderplayer.1
-new file mode 100644
-index 0000000..5435c63
---- /dev/null
-+++ b/doc/manpage/blenderplayer.1
+diff -Naur blender-2.77a.old/doc/manpage/blenderplayer.1 blender-2.77a/doc/manpage/blenderplayer.1
+--- blender-2.77a.old/doc/manpage/blenderplayer.1	1970-01-01 01:00:00.000000000 +0100
++++ blender-2.77a/doc/manpage/blenderplayer.1	2016-06-12 14:18:50.371651059 +0200
 @@ -0,0 +1,131 @@
 +.TH "BLENDERPLAYER" "1" "October 17, 2011" "Blender 2\&.60 (sub 0)"
 +.SH "NAME"
@@ -147,11 +133,10 @@ index 0000000..5435c63
 +.br
 +.SH AUTHORS
 +This manpage was written for a Debian by Kevin Roy <kiniou@gmail.com>.
-diff --git a/source/creator/CMakeLists.txt b/source/creator/CMakeLists.txt
-index 8b99a9c..1c75ff4 100644
---- a/source/creator/CMakeLists.txt
-+++ b/source/creator/CMakeLists.txt
-@@ -448,6 +448,7 @@ if(UNIX AND NOT APPLE)
+diff -Naur blender-2.77a.old/source/creator/CMakeLists.txt blender-2.77a/source/creator/CMakeLists.txt
+--- blender-2.77a.old/source/creator/CMakeLists.txt	2016-06-12 14:18:42.358493086 +0200
++++ blender-2.77a/source/creator/CMakeLists.txt	2016-06-12 14:18:50.373651099 +0200
+@@ -451,6 +451,7 @@
  			FILES
  				${CMAKE_SOURCE_DIR}/release/freedesktop/blender.desktop
  				${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg
@@ -159,7 +144,7 @@ index 8b99a9c..1c75ff4 100644
  			DESTINATION "."
  		)
  
-@@ -470,6 +471,10 @@ if(UNIX AND NOT APPLE)
+@@ -473,6 +474,10 @@
  				FILES ${CMAKE_CURRENT_BINARY_DIR}/blender.1
  				DESTINATION share/man/man1
  			)

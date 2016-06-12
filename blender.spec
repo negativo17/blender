@@ -1,4 +1,4 @@
-%global blender_api 2.76
+%global blender_api 2.77
 %global min_cuda_version 6.5
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 # Turn off the brp-python-bytecompile script 
@@ -19,8 +19,8 @@
 
 Name:           blender
 Epoch:          1
-Version:        %{blender_api}
-Release:        3%{?dist}
+Version:        %{blender_api}a
+Release:        1%{?dist}
 
 Summary:        3D modeling, animation, rendering and post-production
 License:        GPLv2
@@ -33,12 +33,12 @@ Source6:        %{name}.appdata.xml
 Source10:       macros.%{name}
 
 Patch0:         %{name}-2.76-droid.patch
-Patch1:         0001-blender_thumbnailer.patch
-Patch2:         0002-install_in_usr_share.patch
-Patch3:         0003-locales_directory_install.patch
-Patch4:         0004-update_manpages.patch
-Patch5:         0005-do_not_use_version_number_in_system_path.patch
-Patch6:         %{name}-2.73a-cuda.patch
+Patch1:         %{name}-2.77a-thumbnailer.patch
+Patch2:         %{name}-2.77a-install-usr-share.patch
+Patch3:         %{name}-2.77a-locales-directory.patch
+Patch4:         %{name}-2.77a-manpages.patch
+Patch5:         %{name}-2.77a-unversioned-system-path.patch
+Patch6:         %{name}-2.77a-cuda.patch
 
 BuildRequires:  boost-devel
 BuildRequires:  cmake
@@ -80,7 +80,7 @@ BuildRequires:  OpenImageIO-devel
 BuildRequires:  openjpeg-devel
 BuildRequires:  openssl-devel
 BuildRequires:  pcre-devel
-BuildRequires:  python3-devel >= 3.4
+BuildRequires:  python3-devel >= 3.5
 BuildRequires:  python3-requests
 BuildRequires:  qhull-devel
 BuildRequires:  SDL2-devel
@@ -270,6 +270,10 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 }
 
 %changelog
+* Sun Jun 12 2016 Simone Caronni <negativo17@gmail.com> - 1:2.77a-1
+- Update to 2.77a, requires Python 3.5.
+- Rebase all patches.
+
 * Fri Dec 11 2015 Simone Caronni <negativo17@gmail.com> - 1:2.76-3
 - Add Debian patches, enable localization support.
 - Remove obsoletes/provides for blender-fonts (Fedora 10!).

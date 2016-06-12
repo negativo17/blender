@@ -1,0 +1,35 @@
+diff -Naur blender-2.77a.old/extern/cuew/auto/cuew_gen.py blender-2.77a/extern/cuew/auto/cuew_gen.py
+--- blender-2.77a.old/extern/cuew/auto/cuew_gen.py	2016-06-12 14:16:58.376443149 +0200
++++ blender-2.77a/extern/cuew/auto/cuew_gen.py	2016-06-12 14:29:35.610065752 +0200
+@@ -478,7 +478,7 @@
+   const char *cuda_paths[] = {"/usr/local/cuda/lib/libcuda.dylib", NULL};
+   const char *nvrtc_paths[] = {"/usr/local/cuda/lib/libnvrtc.dylib", NULL};
+ #else
+-  const char *cuda_paths[] = {"libcuda.so", NULL};
++  const char *cuda_paths[] = {"libcuda.so.1", NULL};
+   const char *nvrtc_paths[] = {"libnvrtc.so",
+ #  if defined(__x86_64__) || defined(_M_X64)
+                                "/usr/local/cuda/lib64/libnvrtc.so",
+diff -Naur blender-2.77a.old/extern/cuew/src/cuew.c blender-2.77a/extern/cuew/src/cuew.c
+--- blender-2.77a.old/extern/cuew/src/cuew.c	2016-06-12 14:16:58.376443149 +0200
++++ blender-2.77a/extern/cuew/src/cuew.c	2016-06-12 14:29:35.611065771 +0200
+@@ -323,7 +323,7 @@
+   const char *cuda_paths[] = {"/usr/local/cuda/lib/libcuda.dylib", NULL};
+   const char *nvrtc_paths[] = {"/usr/local/cuda/lib/libnvrtc.dylib", NULL};
+ #else
+-  const char *cuda_paths[] = {"libcuda.so", NULL};
++  const char *cuda_paths[] = {"libcuda.so.1", NULL};
+   const char *nvrtc_paths[] = {"libnvrtc.so",
+ #  if defined(__x86_64__) || defined(_M_X64)
+                                "/usr/local/cuda/lib64/libnvrtc.so",
+diff -Naur blender-2.77a.old/intern/cycles/kernel/CMakeLists.txt blender-2.77a/intern/cycles/kernel/CMakeLists.txt
+--- blender-2.77a.old/intern/cycles/kernel/CMakeLists.txt	2016-06-12 14:16:58.552446620 +0200
++++ blender-2.77a/intern/cycles/kernel/CMakeLists.txt	2016-06-12 14:27:31.063712320 +0200
+@@ -243,6 +243,7 @@
+ 					${cuda_debug_flags}
+ 					-I${CMAKE_CURRENT_SOURCE_DIR}/../util
+ 					-I${CMAKE_CURRENT_SOURCE_DIR}/svm
++					-I/usr/include/cuda
+ 					-DCCL_NAMESPACE_BEGIN=
+ 					-DCCL_NAMESPACE_END=
+ 					-DNVCC
