@@ -20,7 +20,7 @@
 Name:           blender
 Epoch:          1
 Version:        %{blender_api}a
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 Summary:        3D modeling, animation, rendering and post-production
 License:        GPLv2
@@ -270,6 +270,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 }
 
 %changelog
+* Fri Jul 22 2016 Simone Caronni <negativo17@gmail.com> - 1:2.77a-2
+- Rebuild for ffmpeg 3.1.1.
+
 * Sun Jun 12 2016 Simone Caronni <negativo17@gmail.com> - 1:2.77a-1
 - Update to 2.77a, requires Python 3.5.
 - Rebase all patches.
