@@ -25,11 +25,13 @@ diff -Naur blender-2.77a.old/extern/cuew/src/cuew.c blender-2.77a/extern/cuew/sr
 diff -Naur blender-2.77a.old/intern/cycles/kernel/CMakeLists.txt blender-2.77a/intern/cycles/kernel/CMakeLists.txt
 --- blender-2.77a.old/intern/cycles/kernel/CMakeLists.txt	2016-06-12 14:16:58.552446620 +0200
 +++ blender-2.77a/intern/cycles/kernel/CMakeLists.txt	2016-06-12 14:27:31.063712320 +0200
-@@ -243,6 +243,7 @@
+@@ -243,6 +243,9 @@
  					${cuda_debug_flags}
  					-I${CMAKE_CURRENT_SOURCE_DIR}/../util
  					-I${CMAKE_CURRENT_SOURCE_DIR}/svm
 +					-I/usr/include/cuda
++					-std=c++11
++					-D__CORRECT_ISO_CPP11_MATH_H_PROTO
  					-DCCL_NAMESPACE_BEGIN=
  					-DCCL_NAMESPACE_END=
  					-DNVCC
