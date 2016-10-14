@@ -6,15 +6,6 @@ diff -Naur blender-2.77a.old/blender.thumbnailer blender-2.77a/blender.thumbnail
 +TryExec=/usr/share/blender/scripts/blender-thumbnailer.py
 +Exec=/usr/share/blender/scripts/blender-thumbnailer.py %i %o
 +MimeType=application/x-blender;
-diff -Naur blender-2.77a.old/release/bin/blender-thumbnailer.py blender-2.77a/release/bin/blender-thumbnailer.py
---- blender-2.77a.old/release/bin/blender-thumbnailer.py	2016-06-12 14:16:58.662448788 +0200
-+++ blender-2.77a/release/bin/blender-thumbnailer.py	2016-06-12 14:17:06.019593830 +0200
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python
-+#!/usr/bin/env python3
- 
- # ##### BEGIN GPL LICENSE BLOCK #####
- #
 diff -Naur blender-2.77a.old/source/creator/CMakeLists.txt blender-2.77a/source/creator/CMakeLists.txt
 --- blender-2.77a.old/source/creator/CMakeLists.txt	2016-06-12 14:16:59.136458133 +0200
 +++ blender-2.77a/source/creator/CMakeLists.txt	2016-06-12 14:17:06.020593849 +0200

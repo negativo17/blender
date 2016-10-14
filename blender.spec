@@ -1,4 +1,4 @@
-%global blender_api 2.77
+%global blender_api 2.78
 %global min_cuda_version 6.5
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 # Turn off the brp-python-bytecompile script 
@@ -10,17 +10,17 @@
 %global cyclesflag OFF
 %endif
 
-#global _with_ffmpeg 1
+%global _with_ffmpeg 1
 
 # Each CUDA ptxas invocation can consume more than 4 gb of memory, so limit the
 # number of parallel make jobs to something suitable for your system when the
 # CUDA build is enabled.
-#global _with_cuda 1
+%global _with_cuda 1
 
 Name:           blender
 Epoch:          1
-Version:        %{blender_api}a
-Release:        2%{?dist}
+Version:        2.78
+Release:        1%{?dist}
 
 Summary:        3D modeling, animation, rendering and post-production
 License:        GPLv2
@@ -33,12 +33,12 @@ Source6:        %{name}.appdata.xml
 Source10:       macros.%{name}
 
 Patch0:         %{name}-2.76-droid.patch
-Patch1:         %{name}-2.77a-thumbnailer.patch
-Patch2:         %{name}-2.77a-install-usr-share.patch
+Patch1:         %{name}-2.78-thumbnailer.patch
+Patch2:         %{name}-2.78-install-usr-share.patch
 Patch3:         %{name}-2.77a-locales-directory.patch
 Patch4:         %{name}-2.77a-manpages.patch
 Patch5:         %{name}-2.77a-unversioned-system-path.patch
-Patch6:         %{name}-2.77a-cuda.patch
+Patch6:         %{name}-2.78-cuda.patch
 
 BuildRequires:  boost-devel
 BuildRequires:  cmake
@@ -80,6 +80,7 @@ BuildRequires:  OpenImageIO-devel
 BuildRequires:  openjpeg-devel
 BuildRequires:  openssl-devel
 BuildRequires:  pcre-devel
+BuildRequires:  pugixml-devel
 BuildRequires:  python3-devel >= 3.5
 BuildRequires:  python3-requests
 BuildRequires:  qhull-devel
@@ -270,6 +271,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 }
 
 %changelog
+* Fri Oct 14 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78-1
+- Update to 2.78.
+
 * Fri Jul 22 2016 Simone Caronni <negativo17@gmail.com> - 1:2.77a-2
 - Rebuild for ffmpeg 3.1.1.
 

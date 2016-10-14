@@ -1,0 +1,14 @@
+diff -Naur blender-2.78.old/source/creator/CMakeLists.txt blender-2.78/source/creator/CMakeLists.txt
+--- blender-2.78.old/source/creator/CMakeLists.txt	2016-10-14 19:42:34.023428851 +0200
++++ blender-2.78/source/creator/CMakeLists.txt	2016-10-14 19:42:44.244605977 +0200
+@@ -353,8 +353,8 @@
+ 	endif()
+ 
+ 	install(
+-		DIRECTORY ${CMAKE_SOURCE_DIR}/release/scripts
+-		DESTINATION ${TARGETDIR_VER}
++		DIRECTORY ${CMAKE_SOURCE_DIR}/release/scripts/
++		DESTINATION ${CMAKE_INSTALL_PREFIX}/share/blender/scripts/
+ 		PATTERN ".git" EXCLUDE
+ 		PATTERN ".gitignore" EXCLUDE
+ 		PATTERN ".arcconfig" EXCLUDE
