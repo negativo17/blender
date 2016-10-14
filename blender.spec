@@ -15,7 +15,9 @@
 # Each CUDA ptxas invocation can consume more than 4 gb of memory, so limit the
 # number of parallel make jobs to something suitable for your system when the
 # CUDA build is enabled.
+%ifarch x86_64
 %global _with_cuda 1
+%endif
 
 Name:           blender
 Epoch:          1
