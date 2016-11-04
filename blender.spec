@@ -16,12 +16,11 @@
 # number of parallel make jobs to something suitable for your system when the
 # CUDA build is enabled.
 %ifarch x86_64
-%global _with_cuda 1
 %endif
 
 Name:           blender
 Epoch:          1
-Version:        2.78
+Version:        %{blender_api}a
 Release:        1%{?dist}
 
 Summary:        3D modeling, animation, rendering and post-production
@@ -56,6 +55,7 @@ BuildRequires:  freeglut-devel
 BuildRequires:  freetype-devel
 BuildRequires:  ftgl-devel
 BuildRequires:  gettext
+BuildRequires:  git
 BuildRequires:  glew-devel
 BuildRequires:  jack-audio-connection-kit-devel
 BuildRequires:  jemalloc-devel
@@ -82,8 +82,8 @@ BuildRequires:  OpenImageIO-devel
 BuildRequires:  openjpeg-devel
 BuildRequires:  openssl-devel
 BuildRequires:  pcre-devel
+BuildRequires:  pkgconfig(python3)
 BuildRequires:  pugixml-devel
-BuildRequires:  python3-devel >= 3.5
 BuildRequires:  python3-requests
 BuildRequires:  qhull-devel
 BuildRequires:  SDL2-devel
@@ -153,11 +153,12 @@ Nvidia GPUs.
 %build
 mkdir build
 pushd build
+export CFLAGS="%{optflags} -fPIC -funsigned-char -fno-strict-aliasing -std=c++11"
+export CXXFLAGS="$CFLAGS"
 %cmake .. \
     -DBOOST_ROOT=%{_prefix} \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_SKIP_RPATH=ON \
-    -DOPENCOLLADA=%{_includedir} \
     -DPYTHON_VERSION=$(%{__python3} -c "import sys ; print(sys.version[:3])")\
     -DWITH_BUILDINFO=ON \
     %{?_with_ffmpeg:-DWITH_CODEC_FFMPEG=ON} \
@@ -167,7 +168,6 @@ pushd build
     -DWITH_DOC_MANPAGE=ON \
     -DWITH_FFTW3=ON \
     -DWITH_GAMEENGINE=ON \
-    -DWITH_IMAGE_REDCODE=ON \
     -DWITH_INSTALL_PORTABLE=OFF \
     -DWITH_JACK=ON \
     -DWITH_MEM_JEMALLOC=ON \
@@ -273,6 +273,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 }
 
 %changelog
+* Thu Nov 03 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78a-1
+- Update to 2.78a.
+
 * Fri Oct 14 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78-1
 - Update to 2.78.
 
