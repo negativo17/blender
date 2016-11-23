@@ -119,12 +119,14 @@ BuildArch:     noarch
 This package provides rpm macros to support the creation of third-party addon
 packages to extend Blender.
 
-%package -n fonts-%{name}
+%package fonts
 Summary:       International Blender mono space font
 License:       ASL 2.0 and GPlv3 and Bitstream Vera and Public Domain
 BuildArch:     noarch
+Obsoletes:     fonts-%{name} < 1:2.78-3
+Provides:      fonts-%{name} = %{?epoch:%{epoch}:}%{version}-%{release}
 
-%description -n fonts-%{name}
+%description fonts
 This package contains an international Blender mono space font which is a
 composition of several mono space fonts to cover several character sets.
 
@@ -261,7 +263,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %files rpm-macros
 %{macrosdir}/macros.%{name}
 
-%files -n fonts-%{name}
+%files fonts
 %{!?_licensedir:%global license %%doc}
 %license release/datafiles/LICENSE-*.ttf.txt
 %{_fontbasedir}/%{name}/
@@ -275,6 +277,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Thu Nov 03 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78a-1
 - Update to 2.78a.
+- Rename fonts-blender to blender-fonts as in the Fedora package.
 
 * Fri Oct 14 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78-1
 - Update to 2.78.
