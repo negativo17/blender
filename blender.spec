@@ -1,5 +1,5 @@
 %global blender_api 2.78
-%global min_cuda_version 6.5
+%global min_cuda_version 8.0
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 # Turn off the brp-python-bytecompile script 
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
@@ -12,10 +12,14 @@
 
 %global _with_ffmpeg 1
 
+%ifarch x86_64
 # Each CUDA ptxas invocation can consume more than 4 gb of memory, so limit the
 # number of parallel make jobs to something suitable for your system when the
 # CUDA build is enabled.
-%ifarch x86_64
+# %global _with_cuda 1
+%global openvdbflag ON
+%else
+%global openvdbflag OFF
 %endif
 
 Name:           blender
@@ -39,7 +43,7 @@ Patch2:         %{name}-2.78-install-usr-share.patch
 Patch3:         %{name}-2.77a-locales-directory.patch
 Patch4:         %{name}-2.77a-manpages.patch
 Patch5:         %{name}-2.77a-unversioned-system-path.patch
-Patch6:         %{name}-2.78-cuda.patch
+Patch6:         %{name}-2.78a-cuda.patch
 
 BuildRequires:  boost-devel
 BuildRequires:  cmake
@@ -81,6 +85,7 @@ BuildRequires:  OpenEXR-devel
 BuildRequires:  OpenImageIO-devel
 BuildRequires:  openjpeg-devel
 BuildRequires:  openssl-devel
+BuildRequires:  openvdb-devel
 BuildRequires:  pcre-devel
 BuildRequires:  pkgconfig(python3)
 BuildRequires:  pugixml-devel
@@ -134,8 +139,9 @@ composition of several mono space fonts to cover several character sets.
 %package cuda
 Summary:       CUDA support for Blender
 Requires:      %{name} = %{?epoch:%{epoch}:}%{version}-%{release}
-# It dynamically opens libcuda.so.1
+# It dynamically opens libcuda.so.1 and libnvrtc.so.8.0
 Requires:      nvidia-driver-cuda-libs%{_isa}
+Requires:      cuda-nvrtc
 
 %description cuda
 This package contains CUDA support for Blender, to enable rendering on supported
@@ -176,6 +182,8 @@ export CXXFLAGS="$CFLAGS"
     -DWITH_MOD_OCEANSIM=ON \
     -DWITH_OPENCOLLADA=ON \
     -DWITH_OPENCOLORIO=ON \
+    -DWITH_OPENVDB=%{openvdbflag} \
+    -DWITH_OPENVDB_BLOSC=%{openvdbflag} \
     -DWITH_PLAYER=ON \
     -DWITH_PYTHON=ON \
     -DWITH_PYTHON_INSTALL=OFF \
@@ -278,6 +286,8 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 * Thu Nov 03 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78a-1
 - Update to 2.78a.
 - Rename fonts-blender to blender-fonts as in the Fedora package.
+- Enable OpenVDB support.
+- Enable CUDA NVRTC support.
 
 * Fri Oct 14 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78-1
 - Update to 2.78.
