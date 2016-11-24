@@ -85,7 +85,9 @@ BuildRequires:  OpenEXR-devel
 BuildRequires:  OpenImageIO-devel
 BuildRequires:  openjpeg-devel
 BuildRequires:  openssl-devel
+%ifarch x86_64
 BuildRequires:  openvdb-devel
+%endif
 BuildRequires:  pcre-devel
 BuildRequires:  pkgconfig(python3)
 BuildRequires:  pugixml-devel
