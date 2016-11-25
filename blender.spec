@@ -13,13 +13,15 @@
 %global _with_ffmpeg 1
 
 %ifarch x86_64
+
 # Each CUDA ptxas invocation can consume more than 4 gb of memory, so limit the
 # number of parallel make jobs to something suitable for your system when the
 # CUDA build is enabled.
-# %global _with_cuda 1
-%global openvdbflag ON
-%else
-%global openvdbflag OFF
+# %%global _with_cuda 1
+
+# Does not build yet with OpenVDB 4.
+# %%global _with_openvdb 1
+
 %endif
 
 Name:           blender
@@ -45,13 +47,24 @@ Patch4:         %{name}-2.77a-manpages.patch
 Patch5:         %{name}-2.77a-unversioned-system-path.patch
 Patch6:         %{name}-2.78a-cuda.patch
 
+%{?_with_openvdb:
+BuildRequires:  openvdb-devel
+BuildRequires:  tbb-devel
+}
+
+%{?_with_cuda:
+BuildRequires:  cuda-devel >= %{min_cuda_version}
+}
+
+%{?_with_ffmpeg:
+BuildRequires:  ffmpeg-devel
+}
+
 BuildRequires:  boost-devel
 BuildRequires:  cmake
-%{?_with_cuda:BuildRequires:  cuda-devel >= %{min_cuda_version}}
 BuildRequires:  desktop-file-utils
 BuildRequires:  esound-devel
 BuildRequires:  expat-devel
-%{?_with_ffmpeg:BuildRequires:  ffmpeg-devel}
 BuildRequires:  fftw-devel
 BuildRequires:  fontpackages-devel
 BuildRequires:  freealut-devel
@@ -85,9 +98,6 @@ BuildRequires:  OpenEXR-devel
 BuildRequires:  OpenImageIO-devel
 BuildRequires:  openjpeg-devel
 BuildRequires:  openssl-devel
-%ifarch x86_64
-BuildRequires:  openvdb-devel
-%endif
 BuildRequires:  pcre-devel
 BuildRequires:  pkgconfig(python3)
 BuildRequires:  pugixml-devel
@@ -184,8 +194,8 @@ export CXXFLAGS="$CFLAGS"
     -DWITH_MOD_OCEANSIM=ON \
     -DWITH_OPENCOLLADA=ON \
     -DWITH_OPENCOLORIO=ON \
-    -DWITH_OPENVDB=%{openvdbflag} \
-    -DWITH_OPENVDB_BLOSC=%{openvdbflag} \
+    %{?_with_openvdb:-DWITH_OPENVDB=ON} \
+    %{?_with_openvdb:-DWITH_OPENVDB_BLOSC=ON} \
     -DWITH_PLAYER=ON \
     -DWITH_PYTHON=ON \
     -DWITH_PYTHON_INSTALL=OFF \
