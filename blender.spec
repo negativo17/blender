@@ -17,7 +17,7 @@
 # Each CUDA ptxas invocation can consume more than 4 gb of memory, so limit the
 # number of parallel make jobs to something suitable for your system when the
 # CUDA build is enabled.
-# %%global _with_cuda 1
+%global _with_cuda 1
 
 # Does not build yet with OpenVDB 4.
 # %%global _with_openvdb 1
@@ -25,9 +25,9 @@
 %endif
 
 Name:           blender
-Epoch:          1
+Epoch:          2
 Version:        %{blender_api}a
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 Summary:        3D modeling, animation, rendering and post-production
 License:        GPLv2
@@ -53,6 +53,7 @@ BuildRequires:  tbb-devel
 }
 
 %{?_with_cuda:
+BuildRequires:  clang
 BuildRequires:  cuda-devel >= %{min_cuda_version}
 }
 
@@ -173,8 +174,6 @@ Nvidia GPUs.
 %build
 mkdir build
 pushd build
-export CFLAGS="%{optflags} -fPIC -funsigned-char -fno-strict-aliasing -std=c++11"
-export CXXFLAGS="$CFLAGS"
 %cmake .. \
     -DBOOST_ROOT=%{_prefix} \
     -DBUILD_SHARED_LIBS=OFF \
@@ -295,6 +294,10 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 }
 
 %changelog
+* Thu Dec 01 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78a-2
+- Use Clang for CUDA kernels.
+- Bump Epoch.
+
 * Thu Nov 03 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78a-1
 - Update to 2.78a.
 - Rename fonts-blender to blender-fonts as in the Fedora package.
