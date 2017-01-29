@@ -19,3 +19,15 @@ diff -uNr blender-2.76.orig/source/blender/blenfont/intern/blf_font_i18n.c blend
  		if (fontpath) {
  			char unifont_path[1024];
  
+diff -Naur blender-2.78a.old/source/creator/CMakeLists.txt blender-2.78a/source/creator/CMakeLists.txt
+--- blender-2.78a.old/source/creator/CMakeLists.txt	2016-11-04 15:25:41.885950647 +0100
++++ blender-2.78a/source/creator/CMakeLists.txt	2017-01-29 21:38:17.938835287 +0100
+@@ -372,7 +372,7 @@
+ 	install(
+ 		DIRECTORY
+ 			${CMAKE_SOURCE_DIR}/release/datafiles/fonts
+-		DESTINATION ${TARGETDIR_VER}/datafiles
++		DESTINATION ${CMAKE_INSTALL_PREFIX}/share/fonts/blender
+ 	)
+ 
+ 	set(_locale_dir "${CMAKE_SOURCE_DIR}/release/datafiles/locale")

@@ -27,7 +27,7 @@
 Name:           blender
 Epoch:          2
 Version:        %{blender_api}a
-Release:        2%{?dist}
+Release:        3%{?dist}
 
 Summary:        3D modeling, animation, rendering and post-production
 License:        GPLv2
@@ -110,9 +110,15 @@ BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  xz-devel
 BuildRequires:  zlib-devel
 
-Requires:       google-droid-sans-fonts
-Requires:       fonts-%{name} = %{?epoch:%{epoch}:}%{version}-%{release}
-Provides:       %{name}(ABI) = %{blender_api}
+# Appstream stuff
+BuildRequires:	libappstream-glib
+
+Requires:	google-droid-sans-fonts
+Requires:	%{name}-fonts = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:	fontpackages-filesystem
+Requires:	python3-numpy
+Requires:	python3-requests
+Provides:	blender(ABI) = %{blender_api}
 
 %description
 Blender is the essential software solution you need for 3D, from modeling,
@@ -171,14 +177,25 @@ Nvidia GPUs.
 %patch5 -p1
 %patch6 -p1
 
+mkdir cmake-make
+
 %build
-mkdir build
-pushd build
+pushd cmake-make
+export CFLAGS="$RPM_OPT_FLAGS -fPIC -funsigned-char -fno-strict-aliasing"
+export CXXFLAGS="$CFLAGS -std=c++11"
+
+%ifarch ppc64le
+# Disable altivec for now, bug 1393157
+# https://lists.blender.org/pipermail/bf-committers/2016-November/047844.html
+export CXXFLAGS="$CXXFLAGS -mno-altivec"
+%endif
+
 %cmake .. \
     -DBOOST_ROOT=%{_prefix} \
     -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_INSTALL_PREFIX=%{_prefix} \
     -DCMAKE_SKIP_RPATH=ON \
-    -DPYTHON_VERSION=$(%{__python3} -c "import sys ; print(sys.version[:3])")\
+    -DPYTHON_VERSION=$(%{__python3} -c "import sys ; print(sys.version[:3])") \
     -DWITH_BUILDINFO=ON \
     %{?_with_ffmpeg:-DWITH_CODEC_FFMPEG=ON} \
     -DWITH_CODEC_SNDFILE=ON \
@@ -187,6 +204,8 @@ pushd build
     -DWITH_DOC_MANPAGE=ON \
     -DWITH_FFTW3=ON \
     -DWITH_GAMEENGINE=ON \
+    -DWITH_IMAGE_OPENJPEG=ON \
+    -DWITH_INPUT_NDOF=ON \
     -DWITH_INSTALL_PORTABLE=OFF \
     -DWITH_JACK=ON \
     -DWITH_MEM_JEMALLOC=ON \
@@ -205,11 +224,11 @@ pushd build
     %{?_with_cuda:-DCUDA_NVCC_EXECUTABLE=%{_bindir}/nvcc} \
     %{?_with_cuda:-DWITH_CYCLES_CUDA_BINARIES=ON}
 
-make %{?_smp_mflags}
+%make_build
 popd
 
 %install
-pushd build
+pushd cmake-make
 %make_install
 popd
 
@@ -223,20 +242,20 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 mkdir -p %{buildroot}%{macrosdir}
 sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE10} >%{buildroot}%{macrosdir}/macros.%{name}
 
-# Fonts
-mkdir -p %{buildroot}%{_fontbasedir}/%{name}/
-mv %{buildroot}%{_datadir}/locale/fonts/* %{buildroot}%{_fontbasedir}/%{name}/
-rm -fr %{buildroot}%{_datadir}/locale/fonts
-
 # Deal with docs in the files section
-rm -rf %{buildroot}%{_docdir}/blender
+rm -rf %{buildroot}%{_docdir}/%{name}
 
 # AppData
-install -p -D -m 644 %{SOURCE6} %{buildroot}%{_datadir}/appdata/%{name}.appdata.xml
+install -p -m 644 -D %{SOURCE6} %{buildroot}%{_datadir}/appdata/%{name}.appdata.xml
+install -p -m 644 -D %{SOURCE2} %{buildroot}%{_datadir}/metainfo/%{name}-fonts.metainfo.xml
 
 # Localization
 %find_lang %{name}
 rm -fr %{buildroot}%{_datadir}/locale/languages
+
+%check
+appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/%{name}.appdata.xml
+appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/%{name}-fonts.metainfo.xml
 
 %post
 touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
@@ -256,7 +275,6 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 %files -f %{name}.lang
-%{!?_licensedir:%global license %%doc}
 %license COPYING
 %license doc/license/*-license.txt
 %license release/text/copyright.txt
@@ -272,7 +290,6 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_mandir}/man1/%{name}.*
 
 %files -n %{name}player
-%{!?_licensedir:%global license %%doc}
 %license COPYING
 %license doc/license/*-license.txt
 %license release/text/copyright.txt
@@ -283,8 +300,8 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{macrosdir}/macros.%{name}
 
 %files fonts
-%{!?_licensedir:%global license %%doc}
 %license release/datafiles/LICENSE-*.ttf.txt
+%{_datadir}/metainfo/%{name}-fonts.metainfo.xml
 %{_fontbasedir}/%{name}/
 
 %{?_with_cuda:
@@ -294,6 +311,12 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 }
 
 %changelog
+* Sun Jan 29 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78a-3
+- Improve font installation.
+- Update requirement.
+- Add fonts AppData.
+- Update GCC flags.
+
 * Thu Dec 01 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78a-2
 - Use Clang for CUDA kernels.
 - Bump Epoch.
