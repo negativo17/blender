@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2016 Luya Tshimbalanga <luya@fedoraproject.org> -->
+<component type="font">
+	<id>blender-fonts</id>
+	<metadata_license> CC0-1.0</metadata_license>
+	<name>Blender fonts</name>
+	<summary>International blender mono space font</summary>
+	<description>
+		<p>A set of international blender mono space font to cover several characters.</p>
+		<p>These fonts are mainly used for the interface of Blender 3D.</p>
+	</description>
+	<url type="homepage">http://www.blender.org</url>
+	<updatecontact>luya@fedoraproject.org</updatecontact>
+</component>

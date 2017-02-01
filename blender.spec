@@ -1,8 +1,9 @@
 %global blender_api 2.78
-%global min_cuda_version 8.0
-%global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
-# Turn off the brp-python-bytecompile script 
+
+# Turn off the brp-python-bytecompile script
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
+
+%global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
 %ifarch %{ix86} x86_64
 %global cyclesflag ON
@@ -18,34 +19,36 @@
 # number of parallel make jobs to something suitable for your system when the
 # CUDA build is enabled.
 %global _with_cuda 1
+%global min_cuda_version 8.0
 
 # Does not build yet with OpenVDB 4.
 # %%global _with_openvdb 1
 
 %endif
 
-Name:           blender
-Epoch:          2
-Version:        %{blender_api}a
-Release:        3%{?dist}
+Name:       blender
+Epoch:      2
+Version:    %{blender_api}a
+Release:    11%{?dist}
 
-Summary:        3D modeling, animation, rendering and post-production
-License:        GPLv2
-URL:            http://www.%{name}.org
+Summary:    3D modeling, animation, rendering and post-production
+License:    GPLv2
+URL:        http://www.blender.org
 
-Source0:        http://download.%{name}.org/source/%{name}-%{version}.tar.gz
-Source1:        %{name}player.1
-Source5:        %{name}.xml
-Source6:        %{name}.appdata.xml
-Source10:       macros.%{name}
+Source0:    http://download.%{name}.org/source/%{name}-%{version}.tar.gz
+Source1:    %{name}player.1
+Source2:    %{name}-fonts.metainfo.xml
+Source5:    %{name}.xml
+Source6:    %{name}.appdata.xml
+Source10:   macros.%{name}
 
-Patch0:         %{name}-2.76-droid.patch
-Patch1:         %{name}-2.78-thumbnailer.patch
-Patch2:         %{name}-2.78-install-usr-share.patch
-Patch3:         %{name}-2.77a-locales-directory.patch
-Patch4:         %{name}-2.77a-manpages.patch
-Patch5:         %{name}-2.77a-unversioned-system-path.patch
-Patch6:         %{name}-2.78a-cuda.patch
+Patch0:     %{name}-2.76-droid.patch
+Patch1:     %{name}-2.78a-thumbnailer.patch
+Patch2:     %{name}-2.78a-scripts.patch
+Patch3:     %{name}-2.78a-locale.patch
+Patch4:     %{name}-2.78a-manpages.patch
+Patch5:     %{name}-2.78a-unversioned-system-path.patch
+Patch6:     %{name}-2.78a-cuda.patch
 
 %{?_with_openvdb:
 BuildRequires:  openvdb-devel
@@ -92,6 +95,7 @@ BuildRequires:  libtool
 BuildRequires:  libvorbis-devel
 BuildRequires:  libXi-devel
 BuildRequires:  libxml2-devel
+BuildRequires:  lzo-devel
 BuildRequires:  ode-devel
 BuildRequires:  openCOLLADA-devel >= svn825
 BuildRequires:  OpenColorIO-devel
@@ -111,14 +115,14 @@ BuildRequires:  xz-devel
 BuildRequires:  zlib-devel
 
 # Appstream stuff
-BuildRequires:	libappstream-glib
+BuildRequires:  libappstream-glib
 
-Requires:	google-droid-sans-fonts
-Requires:	%{name}-fonts = %{?epoch:%{epoch}:}%{version}-%{release}
-Requires:	fontpackages-filesystem
-Requires:	python3-numpy
-Requires:	python3-requests
-Provides:	blender(ABI) = %{blender_api}
+Requires:       google-droid-sans-fonts
+Requires:       %{name}-fonts = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:       fontpackages-filesystem
+Requires:       python3-numpy
+Requires:       python3-requests
+Provides:       blender(ABI) = %{blender_api}
 
 %description
 Blender is the essential software solution you need for 3D, from modeling,
@@ -128,27 +132,27 @@ Professionals and novices can easily and inexpensively publish stand-alone,
 secure, multi-platform content to the web, CD-ROMs, and other media.
 
 %package -n blenderplayer
-Summary:       Standalone Blender player
-Provides:      %{name}(ABI) = %{blender_api}
+Summary:        Standalone Blender player
+Provides:       %{name}(ABI) = %{blender_api}
 
 %description -n blenderplayer
 This package contains a stand alone release of the Blender player. You will need
 this package to play games which are based on the Blender Game Engine.
 
 %package rpm-macros
-Summary:       RPM macros to build third-party blender addons packages
-BuildArch:     noarch
+Summary:        RPM macros to build third-party blender addons packages
+BuildArch:      noarch
 
 %description rpm-macros
 This package provides rpm macros to support the creation of third-party addon
 packages to extend Blender.
 
 %package fonts
-Summary:       International Blender mono space font
-License:       ASL 2.0 and GPlv3 and Bitstream Vera and Public Domain
-BuildArch:     noarch
-Obsoletes:     fonts-%{name} < 1:2.78-3
-Provides:      fonts-%{name} = %{?epoch:%{epoch}:}%{version}-%{release}
+Summary:        International Blender mono space font
+License:        ASL 2.0 and GPlv3 and Bitstream Vera and Public Domain
+BuildArch:      noarch
+Obsoletes:      fonts-%{name} < 1:2.78-3
+Provides:       fonts-%{name} = %{?epoch:%{epoch}:}%{version}-%{release}
 
 %description fonts
 This package contains an international Blender mono space font which is a
@@ -168,21 +172,12 @@ Nvidia GPUs.
 }
 
 %prep
-%setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
+%autosetup -p1
 
 mkdir cmake-make
 
 %build
 pushd cmake-make
-export CFLAGS="$RPM_OPT_FLAGS -fPIC -funsigned-char -fno-strict-aliasing"
-export CXXFLAGS="$CFLAGS -std=c++11"
 
 %ifarch ppc64le
 # Disable altivec for now, bug 1393157
@@ -191,9 +186,11 @@ export CXXFLAGS="$CXXFLAGS -mno-altivec"
 %endif
 
 %cmake .. \
+%ifnarch %{ix86} x86_64
+    -DWITH_RAYOPTIMIZATION=OFF \
+%endif
     -DBOOST_ROOT=%{_prefix} \
     -DBUILD_SHARED_LIBS=OFF \
-    -DCMAKE_INSTALL_PREFIX=%{_prefix} \
     -DCMAKE_SKIP_RPATH=ON \
     -DPYTHON_VERSION=$(%{__python3} -c "import sys ; print(sys.version[:3])") \
     -DWITH_BUILDINFO=ON \
@@ -220,6 +217,7 @@ export CXXFLAGS="$CXXFLAGS -mno-altivec"
     -DWITH_PYTHON_INSTALL_REQUESTS=OFF \
     -DWITH_PYTHON_SAFETY=ON \
     -DWITH_SDL=ON \
+    -DWITH_SYSTEM_LZO=ON \
     -DWITH_SYSTEM_OPENJPEG=ON \
     %{?_with_cuda:-DCUDA_NVCC_EXECUTABLE=%{_bindir}/nvcc} \
     %{?_with_cuda:-DWITH_CYCLES_CUDA_BINARIES=ON}
@@ -238,12 +236,12 @@ install -p -D -m 644 %{SOURCE5} %{buildroot}%{_datadir}/mime/packages/%{name}.xm
 # Desktop icon
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 
-# RPM macros
-mkdir -p %{buildroot}%{macrosdir}
-sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE10} >%{buildroot}%{macrosdir}/macros.%{name}
-
 # Deal with docs in the files section
-rm -rf %{buildroot}%{_docdir}/%{name}
+rm -rf %{buildroot}%{_docdir}/%{name}/*
+
+# rpm macros
+mkdir -p %{buildroot}%{macrosdir}
+sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE10} > %{buildroot}%{macrosdir}/macros.%{name}
 
 # AppData
 install -p -m 644 -D %{SOURCE6} %{buildroot}%{_datadir}/appdata/%{name}.appdata.xml
@@ -258,21 +256,31 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/%{name}.a
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/%{name}-fonts.metainfo.xml
 
 %post
-touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-%{_bindir}/update-desktop-database &> /dev/null || :
-%{_bindir}/update-mime-database %{_datadir}/mime &> /dev/null || :
+%if 0%{?fedora} == 24 || 0%{?fedora} == 23 || 0%{?rhel} == 7
+/usr/bin/update-desktop-database &> /dev/null || :
+%endif
+/bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
+%if 0%{?fedora} == 23 || 0%{?rhel} == 7
+/bin/touch --no-create %{_datadir}/mime/packages &> /dev/null || :
+%endif
 
 %postun
+%if 0%{?fedora} == 24 || 0%{?fedora} == 23 || 0%{?rhel} == 7
+/usr/bin/update-desktop-database &> /dev/null || :
+%endif
 if [ $1 -eq 0 ] ; then
-    touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-    gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+    /bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
+    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
+%if 0%{?fedora} == 23 || 0%{?rhel} == 7
+    /usr/bin/update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
+%endif
 fi
-%{_bindir}/update-desktop-database &> /dev/null || :
-%{_bindir}/update-mime-database %{_datadir}/mime &> /dev/null || :
 
 %posttrans
-gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-%{_bindir}/update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+%if 0%{?fedora} == 23 || 0%{?rhel} == 7
+/usr/bin/update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
+%endif
 
 %files -f %{name}.lang
 %license COPYING
@@ -311,6 +319,11 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 }
 
 %changelog
+* Wed Feb 01 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78a-11
+- Merge in SPEC file from Fedora.
+- Update scriptlets as per packaging guidelines.
+- Update patches.
+
 * Sun Jan 29 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78a-3
 - Improve font installation.
 - Update requirement.
