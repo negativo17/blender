@@ -28,8 +28,8 @@
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}a
-Release:    11%{?dist}
+Version:    %{blender_api}b
+Release:    1%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -163,7 +163,7 @@ composition of several mono space fonts to cover several character sets.
 Summary:       CUDA support for Blender
 Requires:      %{name} = %{?epoch:%{epoch}:}%{version}-%{release}
 # It dynamically opens libcuda.so.1 and libnvrtc.so.8.0
-Requires:      nvidia-driver-cuda-libs%{_isa}
+Requires:      nvidia-driver-cuda-libs%{?_isa}
 Requires:      cuda-nvrtc
 
 %description cuda
@@ -319,6 +319,9 @@ fi
 }
 
 %changelog
+* Sun Feb 12 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78b-1
+- Update to 2.78b.
+
 * Wed Feb 01 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78a-11
 - Merge in SPEC file from Fedora.
 - Update scriptlets as per packaging guidelines.
