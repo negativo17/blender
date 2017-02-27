@@ -28,7 +28,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}b
+Version:    %{blender_api}c
 Release:    1%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
@@ -319,6 +319,9 @@ fi
 }
 
 %changelog
+* Mon Feb 27 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-1
+- Update to 2.78c.
+
 * Sun Feb 12 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78b-1
 - Update to 2.78b.
 
