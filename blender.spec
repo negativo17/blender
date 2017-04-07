@@ -29,7 +29,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}c
-Release:    1%{?dist}
+Release:    2%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -48,7 +48,13 @@ Patch2:     %{name}-2.78a-scripts.patch
 Patch3:     %{name}-2.78a-locale.patch
 Patch4:     %{name}-2.78a-manpages.patch
 Patch5:     %{name}-2.78a-unversioned-system-path.patch
-Patch6:     %{name}-2.78a-cuda.patch
+# For ppc64le build, currently being discussed on
+# https://lists.blender.org/pipermail/bf-committers/2016-November/047844.html
+Patch6:     %{name}-2.78a-linux-definition-ppc64.patch
+# GPU: Consider latest Gallium driver an official ATI/AMD
+# https://developer.blender.org/rB927a168b077fa5182168068315c4fb0ea998edb6
+Patch7:     %{name}-2.78b-amd-gpu-support.patch
+Patch8:     %{name}-2.78a-cuda.patch
 
 %{?_with_openvdb:
 BuildRequires:  openvdb-devel
@@ -319,6 +325,9 @@ fi
 }
 
 %changelog
+* Fri Apr 07 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-2
+- Merge in latest changes from Fedora.
+
 * Mon Feb 27 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-1
 - Update to 2.78c.
 

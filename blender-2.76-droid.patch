@@ -1,12 +1,12 @@
-diff -uNr blender-2.76.orig/source/blender/blenfont/intern/blf_font_i18n.c blender-2.76/source/blender/blenfont/intern/blf_font_i18n.c
---- blender-2.76.orig/source/blender/blenfont/intern/blf_font_i18n.c	2015-10-10 10:20:56.000000000 +0200
-+++ blender-2.76/source/blender/blenfont/intern/blf_font_i18n.c	2015-10-12 16:40:42.225473358 +0200
+diff -uNr blender-2.78c.orig/source/blender/blenfont/intern/blf_font_i18n.c blender-2.78c/source/blender/blenfont/intern/blf_font_i18n.c
+--- blender-2.78c.orig/source/blender/blenfont/intern/blf_font_i18n.c	2017-02-13 06:08:03.000000000 -0800
++++ blender-2.78c/source/blender/blenfont/intern/blf_font_i18n.c	2017-03-11 21:25:50.361053885 -0800
 @@ -57,7 +57,7 @@
  {
  #ifdef WITH_INTERNATIONAL
  	if (unifont_ttf == NULL) {
 -		const char * const fontpath = BKE_appdir_folder_id(BLENDER_DATAFILES, "fonts");
-+		const char * const fontpath = "/usr/share/fonts/blender";
++		const char * const fontpath = "/usr/share/fonts/blender/fonts";
  		if (fontpath) {
  			char unifont_path[1024];
  
@@ -15,18 +15,21 @@ diff -uNr blender-2.76.orig/source/blender/blenfont/intern/blf_font_i18n.c blend
  #ifdef WITH_INTERNATIONAL
  	if (unifont_mono_ttf == NULL) {
 -		const char *fontpath = BKE_appdir_folder_id(BLENDER_DATAFILES, "fonts");
-+		const char *fontpath = "/usr/share/fonts/blender";
++		const char * const fontpath = "/usr/share/fonts/blender/fonts";
  		if (fontpath) {
  			char unifont_path[1024];
  
-diff -Naur blender-2.78a.old/source/creator/CMakeLists.txt blender-2.78a/source/creator/CMakeLists.txt
---- blender-2.78a.old/source/creator/CMakeLists.txt	2016-11-04 15:25:41.885950647 +0100
-+++ blender-2.78a/source/creator/CMakeLists.txt	2017-01-29 21:38:17.938835287 +0100
-@@ -372,7 +372,7 @@
+diff -uNr blender-2.78c.orig/source/creator/CMakeLists.txt blender-2.78c/source/creator/CMakeLists.txt
+--- blender-2.78c.orig/source/creator/CMakeLists.txt	2017-02-24 06:09:19.000000000 -0800
++++ blender-2.78c/source/creator/CMakeLists.txt	2017-03-13 10:59:14.815315973 -0700
+@@ -370,9 +370,8 @@
+ # localization
+ if(WITH_INTERNATIONAL)
  	install(
- 		DIRECTORY
- 			${CMAKE_SOURCE_DIR}/release/datafiles/fonts
+-		DIRECTORY
+-			${CMAKE_SOURCE_DIR}/release/datafiles/fonts
 -		DESTINATION ${TARGETDIR_VER}/datafiles
++		DIRECTORY ${CMAKE_SOURCE_DIR}/release/datafiles/fonts
 +		DESTINATION ${CMAKE_INSTALL_PREFIX}/share/fonts/blender
  	)
  
