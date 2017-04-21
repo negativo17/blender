@@ -6,7 +6,7 @@ diff -uNr blender-2.78c.orig/source/blender/blenfont/intern/blf_font_i18n.c blen
  #ifdef WITH_INTERNATIONAL
  	if (unifont_ttf == NULL) {
 -		const char * const fontpath = BKE_appdir_folder_id(BLENDER_DATAFILES, "fonts");
-+		const char * const fontpath = "/usr/share/fonts/blender/fonts";
++		const char * const fontpath = "/usr/share/fonts/blender";
  		if (fontpath) {
  			char unifont_path[1024];
  
@@ -15,7 +15,7 @@ diff -uNr blender-2.78c.orig/source/blender/blenfont/intern/blf_font_i18n.c blen
  #ifdef WITH_INTERNATIONAL
  	if (unifont_mono_ttf == NULL) {
 -		const char *fontpath = BKE_appdir_folder_id(BLENDER_DATAFILES, "fonts");
-+		const char * const fontpath = "/usr/share/fonts/blender/fonts";
++		const char * const fontpath = "/usr/share/fonts/blender";
  		if (fontpath) {
  			char unifont_path[1024];
  
@@ -29,7 +29,7 @@ diff -uNr blender-2.78c.orig/source/creator/CMakeLists.txt blender-2.78c/source/
 -		DIRECTORY
 -			${CMAKE_SOURCE_DIR}/release/datafiles/fonts
 -		DESTINATION ${TARGETDIR_VER}/datafiles
-+		DIRECTORY ${CMAKE_SOURCE_DIR}/release/datafiles/fonts
++		DIRECTORY ${CMAKE_SOURCE_DIR}/release/datafiles/fonts/
 +		DESTINATION ${CMAKE_INSTALL_PREFIX}/share/fonts/blender
  	)
  

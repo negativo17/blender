@@ -29,7 +29,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}c
-Release:    2%{?dist}
+Release:    3%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -62,7 +62,8 @@ BuildRequires:  tbb-devel
 }
 
 %{?_with_cuda:
-BuildRequires:  clang
+# CUDA 8 requires gcc < 6 or clang < 3.9
+BuildRequires:  clang < 3.9
 BuildRequires:  cuda-devel >= %{min_cuda_version}
 }
 
@@ -325,6 +326,10 @@ fi
 }
 
 %changelog
+* Fri Apr 21 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-3
+- Remove redundant fonts directory in blender-fonts package.
+- Require Clang < 3.9 for building CUDA 8 support.
+
 * Fri Apr 07 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-2
 - Merge in latest changes from Fedora.
 
