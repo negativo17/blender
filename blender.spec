@@ -237,6 +237,8 @@ pushd cmake-make
 %make_install
 popd
 
+find %{buildroot}%{_datadir}/%{name}/scripts -type f -exec sed -i -e 's/\r$//g' {} \;
+
 # Mime support
 install -p -D -m 644 %{SOURCE5} %{buildroot}%{_datadir}/mime/packages/%{name}.xml
 
