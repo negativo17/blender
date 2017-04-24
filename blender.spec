@@ -21,15 +21,12 @@
 %global _with_cuda 1
 %global min_cuda_version 8.0
 
-# Does not build yet with OpenVDB 4.
-# %%global _with_openvdb 1
-
 %endif
 
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}c
-Release:    3%{?dist}
+Release:    4%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -54,12 +51,8 @@ Patch6:     %{name}-2.78a-linux-definition-ppc64.patch
 # GPU: Consider latest Gallium driver an official ATI/AMD
 # https://developer.blender.org/rB927a168b077fa5182168068315c4fb0ea998edb6
 Patch7:     %{name}-2.78b-amd-gpu-support.patch
-Patch8:     %{name}-2.78a-cuda.patch
-
-%{?_with_openvdb:
-BuildRequires:  openvdb-devel
-BuildRequires:  tbb-devel
-}
+Patch8:     %{name}-278c-openvdb3-abi.patch
+Patch9:     %{name}-2.78a-cuda.patch
 
 %{?_with_cuda:
 # CUDA 8 requires gcc < 6 or clang < 3.9
@@ -110,6 +103,7 @@ BuildRequires:  OpenEXR-devel
 BuildRequires:  OpenImageIO-devel
 BuildRequires:  openjpeg-devel
 BuildRequires:  openssl-devel
+BuildRequires:  openvdb-devel
 BuildRequires:  pcre-devel
 BuildRequires:  pkgconfig(python3)
 BuildRequires:  pugixml-devel
@@ -117,6 +111,7 @@ BuildRequires:  python3-requests
 BuildRequires:  qhull-devel
 BuildRequires:  SDL2-devel
 BuildRequires:  subversion-devel
+BuildRequires:  tbb-devel
 BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  xz-devel
 BuildRequires:  zlib-devel
@@ -216,8 +211,8 @@ export CXXFLAGS="$CXXFLAGS -mno-altivec"
     -DWITH_MOD_OCEANSIM=ON \
     -DWITH_OPENCOLLADA=ON \
     -DWITH_OPENCOLORIO=ON \
-    %{?_with_openvdb:-DWITH_OPENVDB=ON} \
-    %{?_with_openvdb:-DWITH_OPENVDB_BLOSC=ON} \
+    -DWITH_OPENVDB=ON \
+    -DWITH_OPENVDB_BLOSC=ON \
     -DWITH_PLAYER=ON \
     -DWITH_PYTHON=ON \
     -DWITH_PYTHON_INSTALL=OFF \
@@ -328,6 +323,9 @@ fi
 }
 
 %changelog
+* Mon Apr 24 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-4
+- Unconditionally build OpenVDB support
+
 * Fri Apr 21 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-3
 - Remove redundant fonts directory in blender-fonts package.
 - Require Clang < 3.9 for building CUDA 8 support.
