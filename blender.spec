@@ -51,7 +51,7 @@ Patch6:     %{name}-2.78a-linux-definition-ppc64.patch
 # GPU: Consider latest Gallium driver an official ATI/AMD
 # https://developer.blender.org/rB927a168b077fa5182168068315c4fb0ea998edb6
 Patch7:     %{name}-2.78b-amd-gpu-support.patch
-Patch8:     %{name}-278c-openvdb3-abi.patch
+Patch8:     %{name}-2.78c-openvdb3-abi.patch
 Patch9:     %{name}-2.78a-cuda.patch
 
 %{?_with_cuda:
