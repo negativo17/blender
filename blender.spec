@@ -26,7 +26,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}c
-Release:    4%{?dist}
+Release:    5%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -64,6 +64,7 @@ BuildRequires:  cuda-devel >= %{min_cuda_version}
 BuildRequires:  ffmpeg-devel
 }
 
+BuildRequires:  alembic-devel
 BuildRequires:  boost-devel
 BuildRequires:  cmake
 BuildRequires:  desktop-file-utils
@@ -195,6 +196,7 @@ export CXXFLAGS="$CXXFLAGS -mno-altivec"
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_SKIP_RPATH=ON \
     -DPYTHON_VERSION=$(%{__python3} -c "import sys ; print(sys.version[:3])") \
+    -DWITH_ALEMBIC=ON \
     -DWITH_BUILDINFO=ON \
     %{?_with_ffmpeg:-DWITH_CODEC_FFMPEG=ON} \
     -DWITH_CODEC_SNDFILE=ON \
@@ -323,6 +325,9 @@ fi
 }
 
 %changelog
+* Tue Apr 25 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-5
+- Enable Alembic support.
+
 * Mon Apr 24 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-4
 - Unconditionally build OpenVDB support
 
