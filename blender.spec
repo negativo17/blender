@@ -26,7 +26,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}c
-Release:    5%{?dist}
+Release:    6%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -39,7 +39,7 @@ Source5:    %{name}.xml
 Source6:    %{name}.appdata.xml
 Source10:   macros.%{name}
 
-Patch0:     %{name}-2.76-droid.patch
+Patch0:     %{name}-2.78c-droid.patch
 Patch1:     %{name}-2.78a-thumbnailer.patch
 Patch2:     %{name}-2.78a-scripts.patch
 Patch3:     %{name}-2.78a-locale.patch
@@ -55,8 +55,8 @@ Patch8:     %{name}-2.78c-openvdb3-abi.patch
 Patch9:     %{name}-2.78a-cuda.patch
 
 %{?_with_cuda:
-# CUDA 8 requires gcc < 6 or clang < 3.9
-BuildRequires:  clang < 3.9
+# CUDA 8 requires gcc < 6
+BuildRequires:  compat-gcc-53-c++
 BuildRequires:  cuda-devel >= %{min_cuda_version}
 }
 
@@ -325,6 +325,10 @@ fi
 }
 
 %changelog
+* Fri Apr 28 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-6
+- Use GCC 5.3 compatibility package instead of Clang for CUDA components (fix
+  build on Fedora 26+).
+
 * Tue Apr 25 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-5
 - Enable Alembic support.
 

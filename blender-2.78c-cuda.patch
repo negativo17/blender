@@ -20,7 +20,7 @@ diff -Naur blender-2.78a.old/intern/cycles/kernel/CMakeLists.txt blender-2.78a/i
  					-arch=${arch}
  					${CUDA_NVCC_FLAGS}
 +					-I/usr/include/cuda
-+					-ccbin /usr/bin/clang
++					-ccbin /usr/bin/g++53
  					-m${CUDA_BITS}
  					--cubin ${CMAKE_CURRENT_SOURCE_DIR}/kernels/cuda/kernel.cu
  					-o ${CMAKE_CURRENT_BINARY_DIR}/${cuda_cubin}
