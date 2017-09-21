@@ -1,6 +1,6 @@
-diff -uNr blender-2.78c.orig/source/blender/blenfont/intern/blf_font_i18n.c blender-2.78c/source/blender/blenfont/intern/blf_font_i18n.c
---- blender-2.78c.orig/source/blender/blenfont/intern/blf_font_i18n.c	2017-02-13 06:08:03.000000000 -0800
-+++ blender-2.78c/source/blender/blenfont/intern/blf_font_i18n.c	2017-03-11 21:25:50.361053885 -0800
+diff -Naur blender-2.79.old/source/blender/blenfont/intern/blf_font_i18n.c blender-2.79/source/blender/blenfont/intern/blf_font_i18n.c
+--- blender-2.79.old/source/blender/blenfont/intern/blf_font_i18n.c	2017-09-11 06:34:59.000000000 +0200
++++ blender-2.79/source/blender/blenfont/intern/blf_font_i18n.c	2017-09-12 14:12:51.239473283 +0200
 @@ -57,7 +57,7 @@
  {
  #ifdef WITH_INTERNATIONAL
@@ -19,10 +19,10 @@ diff -uNr blender-2.78c.orig/source/blender/blenfont/intern/blf_font_i18n.c blen
  		if (fontpath) {
  			char unifont_path[1024];
  
-diff -uNr blender-2.78c.orig/source/creator/CMakeLists.txt blender-2.78c/source/creator/CMakeLists.txt
---- blender-2.78c.orig/source/creator/CMakeLists.txt	2017-02-24 06:09:19.000000000 -0800
-+++ blender-2.78c/source/creator/CMakeLists.txt	2017-03-13 10:59:14.815315973 -0700
-@@ -370,9 +370,8 @@
+diff -Naur blender-2.79.old/source/creator/CMakeLists.txt blender-2.79/source/creator/CMakeLists.txt
+--- blender-2.79.old/source/creator/CMakeLists.txt	2017-09-12 05:44:18.000000000 +0200
++++ blender-2.79/source/creator/CMakeLists.txt	2017-09-12 14:12:51.239473283 +0200
+@@ -359,9 +359,8 @@
  # localization
  if(WITH_INTERNATIONAL)
  	install(

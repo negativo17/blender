@@ -1,6 +1,6 @@
-diff -Naur blender-2.78a.old/extern/cuew/src/cuew.c blender-2.78a/extern/cuew/src/cuew.c
---- blender-2.78a.old/extern/cuew/src/cuew.c	2016-11-04 15:25:41.467942289 +0100
-+++ blender-2.78a/extern/cuew/src/cuew.c	2016-11-23 21:37:32.415268811 +0100
+diff -Naur blender-2.79.old/extern/cuew/src/cuew.c blender-2.79/extern/cuew/src/cuew.c
+--- blender-2.79.old/extern/cuew/src/cuew.c	2017-09-21 16:29:00.645005383 +0200
++++ blender-2.79/extern/cuew/src/cuew.c	2017-09-21 16:29:12.744228849 +0200
 @@ -323,8 +323,8 @@
    const char *cuda_paths[] = {"/usr/local/cuda/lib/libcuda.dylib", NULL};
    const char *nvrtc_paths[] = {"/usr/local/cuda/lib/libnvrtc.dylib", NULL};
@@ -12,15 +12,15 @@ diff -Naur blender-2.78a.old/extern/cuew/src/cuew.c blender-2.78a/extern/cuew/sr
  #  if defined(__x86_64__) || defined(_M_X64)
                                 "/usr/local/cuda/lib64/libnvrtc.so",
  #else
-diff -Naur blender-2.78a.old/intern/cycles/kernel/CMakeLists.txt blender-2.78a/intern/cycles/kernel/CMakeLists.txt
---- blender-2.78a.old/intern/cycles/kernel/CMakeLists.txt	2016-11-04 15:25:41.489942729 +0100
-+++ blender-2.78a/intern/cycles/kernel/CMakeLists.txt	2016-12-01 15:27:04.336523610 +0100
-@@ -259,6 +259,8 @@
+diff -Naur blender-2.79.old/intern/cycles/kernel/CMakeLists.txt blender-2.79/intern/cycles/kernel/CMakeLists.txt
+--- blender-2.79.old/intern/cycles/kernel/CMakeLists.txt	2017-09-21 16:24:23.457885865 +0200
++++ blender-2.79/intern/cycles/kernel/CMakeLists.txt	2017-09-21 16:24:55.087470048 +0200
+@@ -372,6 +372,8 @@
  			COMMAND ${cuda_nvcc_command}
  					-arch=${arch}
  					${CUDA_NVCC_FLAGS}
 +					-I/usr/include/cuda
 +					-ccbin /usr/bin/g++53
  					-m${CUDA_BITS}
- 					--cubin ${CMAKE_CURRENT_SOURCE_DIR}/kernels/cuda/kernel.cu
+ 					--cubin ${CMAKE_CURRENT_SOURCE_DIR}${cuda_kernel_src}
  					-o ${CMAKE_CURRENT_BINARY_DIR}/${cuda_cubin}

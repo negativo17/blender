@@ -1,7 +1,7 @@
-diff -Naur blender-2.78a.old/source/creator/CMakeLists.txt blender-2.78a/source/creator/CMakeLists.txt
---- blender-2.78a.old/source/creator/CMakeLists.txt	2017-01-29 23:06:07.131813650 +0100
-+++ blender-2.78a/source/creator/CMakeLists.txt	2017-01-29 23:06:33.772282188 +0100
-@@ -353,8 +353,8 @@
+diff -Naur blender-2.79.old/source/creator/CMakeLists.txt blender-2.79/source/creator/CMakeLists.txt
+--- blender-2.79.old/source/creator/CMakeLists.txt	2017-09-12 14:17:03.361182908 +0200
++++ blender-2.79/source/creator/CMakeLists.txt	2017-09-12 14:17:22.264536022 +0200
+@@ -342,8 +342,8 @@
  	endif()
  
  	install(

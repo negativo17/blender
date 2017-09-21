@@ -1,6 +1,6 @@
-diff -Naur blender-2.78a.old/doc/manpage/blenderplayer.1 blender-2.78a/doc/manpage/blenderplayer.1
---- blender-2.78a.old/doc/manpage/blenderplayer.1	1970-01-01 01:00:00.000000000 +0100
-+++ blender-2.78a/doc/manpage/blenderplayer.1	2017-01-29 23:10:44.556692826 +0100
+diff -Naur blender-2.79.old/doc/manpage/blenderplayer.1 blender-2.79/doc/manpage/blenderplayer.1
+--- blender-2.79.old/doc/manpage/blenderplayer.1	1970-01-01 01:00:00.000000000 +0100
++++ blender-2.79/doc/manpage/blenderplayer.1	2017-09-12 14:20:26.719981643 +0200
 @@ -0,0 +1,131 @@
 +.TH "BLENDERPLAYER" "1" "October 17, 2011" "Blender 2\&.60 (sub 0)"
 +.SH "NAME"
@@ -133,10 +133,10 @@ diff -Naur blender-2.78a.old/doc/manpage/blenderplayer.1 blender-2.78a/doc/manpa
 +.br
 +.SH AUTHORS
 +This manpage was written for a Debian by Kevin Roy <kiniou@gmail.com>.
-diff -Naur blender-2.78a.old/source/creator/CMakeLists.txt blender-2.78a/source/creator/CMakeLists.txt
---- blender-2.78a.old/source/creator/CMakeLists.txt	2017-01-29 23:10:25.810363127 +0100
-+++ blender-2.78a/source/creator/CMakeLists.txt	2017-01-29 23:10:44.556692826 +0100
-@@ -480,6 +480,7 @@
+diff -Naur blender-2.79.old/source/creator/CMakeLists.txt blender-2.79/source/creator/CMakeLists.txt
+--- blender-2.79.old/source/creator/CMakeLists.txt	2017-09-12 14:20:11.165691089 +0200
++++ blender-2.79/source/creator/CMakeLists.txt	2017-09-12 14:20:26.719981643 +0200
+@@ -468,6 +468,7 @@
  			FILES
  				${CMAKE_SOURCE_DIR}/release/freedesktop/blender.desktop
  				${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg
@@ -144,7 +144,7 @@ diff -Naur blender-2.78a.old/source/creator/CMakeLists.txt blender-2.78a/source/
  			DESTINATION "."
  		)
  
-@@ -502,6 +503,10 @@
+@@ -490,6 +491,10 @@
  				FILES ${CMAKE_CURRENT_BINARY_DIR}/blender.1
  				DESTINATION share/man/man1
  			)
