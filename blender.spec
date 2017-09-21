@@ -291,7 +291,6 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/%{name}/
-%exclude %{_datadir}/%{name}/scripts/addons/cycles/kernel/kernels/cuda
 %exclude %{_datadir}/%{name}/scripts/addons/cycles/lib/*.cubin
 %{_datadir}/icons/hicolor/*/apps/%{name}.*
 %{_datadir}/mime/packages/%{name}.xml
@@ -314,7 +313,6 @@ fi
 
 %{?_with_cuda:
 %files cuda
-%{_datadir}/%{name}/scripts/addons/cycles/kernel/kernels/cuda
 %{_datadir}/%{name}/scripts/addons/cycles/lib/*.cubin
 }
 
