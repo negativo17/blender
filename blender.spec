@@ -26,7 +26,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}
-Release:    1%{?dist}
+Release:    2%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -50,7 +50,7 @@ Patch7:     %{name}-2.79-cuda.patch
 
 %{?_with_cuda:
 # CUDA 8 requires gcc < 6
-BuildRequires:  compat-gcc-53-c++
+BuildRequires:  cuda-gcc-c++
 BuildRequires:  cuda-devel >= %{min_cuda_version}
 }
 
@@ -218,7 +218,8 @@ export CXXFLAGS="$CXXFLAGS -mno-altivec"
     -DWITH_SYSTEM_LZO=ON \
     -DWITH_SYSTEM_OPENJPEG=ON \
     %{?_with_cuda:-DCUDA_NVCC_EXECUTABLE=%{_bindir}/nvcc} \
-    %{?_with_cuda:-DWITH_CYCLES_CUDA_BINARIES=ON}
+    %{?_with_cuda:-DWITH_CYCLES_CUDA_BINARIES=ON} \
+    %{?_with_cuda:-DCYCLES_CUDA_BINARIES_ARCH="sm_30;sm_35;sm_37;sm_50;sm_52;sm_60;sm_61"}
 
 %make_build
 popd
@@ -317,6 +318,9 @@ fi
 }
 
 %changelog
+* Tue Nov 07 2017 Simone Caronni <negativo17@gmail.com> - 2:2.79-2
+- Use GCC 6.x for CUDA 9.
+
 * Thu Sep 21 2017 Simone Caronni <negativo17@gmail.com> - 2:2.79-1
 - Update to 2.79.
 
