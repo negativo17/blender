@@ -257,16 +257,14 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/%{name}.a
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/%{name}-fonts.metainfo.xml
 
 %post
-%if 0%{?fedora} == 24 || 0%{?rhel} == 7
-/usr/bin/update-desktop-database &> /dev/null || :
-%endif
-/bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
 %if 0%{?rhel} == 7
+/usr/bin/update-desktop-database &> /dev/null || :
 /bin/touch --no-create %{_datadir}/mime/packages &> /dev/null || :
 %endif
+/bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
 
 %postun
-%if 0%{?fedora} == 24 || 0%{?rhel} == 7
+%if 0%{?rhel} == 7
 /usr/bin/update-desktop-database &> /dev/null || :
 %endif
 if [ $1 -eq 0 ] ; then
