@@ -260,24 +260,22 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/%{name}-
 %if 0%{?rhel} == 7
 /usr/bin/update-desktop-database &> /dev/null || :
 /bin/touch --no-create %{_datadir}/mime/packages &> /dev/null || :
-%endif
 /bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
+%endif
 
 %postun
 %if 0%{?rhel} == 7
 /usr/bin/update-desktop-database &> /dev/null || :
-%endif
 if [ $1 -eq 0 ] ; then
     /bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
     /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
-%if 0%{?rhel} == 7
     /usr/bin/update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
-%endif
 fi
+%endif
 
 %posttrans
-/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %if 0%{?rhel} == 7
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 /usr/bin/update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 %endif
 
