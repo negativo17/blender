@@ -1,4 +1,4 @@
-%global blender_api 2.79
+%global blender_api 2.79b
 
 # Turn off the brp-python-bytecompile script
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
@@ -11,22 +11,24 @@
 %global cyclesflag OFF
 %endif
 
-%global _with_ffmpeg 1
-
 %ifarch x86_64
 
 # Each CUDA ptxas invocation can consume more than 4 gb of memory, so limit the
 # number of parallel make jobs to something suitable for your system when the
 # CUDA build is enabled.
 %global _with_cuda 1
-%global min_cuda_version 8.0
+%global min_cuda_version 9.1
 
 %endif
+
+# Enable this or rebuild the package with "--with=ffmpeg" to enable FFmpeg
+# support.
+#global _with_ffmpeg 1
 
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}
-Release:    2%{?dist}
+Release:    4%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -46,7 +48,13 @@ Patch3:     %{name}-2.79-locale.patch
 Patch4:     %{name}-2.79-manpages.patch
 Patch5:     %{name}-2.79-unversioned-system-path.patch
 Patch6:     %{name}-2.79-openvdb3-abi.patch
-Patch7:     %{name}-2.79-cuda.patch
+# Backported patch for openjpeg2 support from
+# https://lists.blender.org/pipermail/bf-blender-cvs/2016-July/088691.html
+# but without patch-updating the bundled openjpeg2 version
+Patch7:     %{name}-2.79-openjpeg2.patch
+Patch8:     util_sseb.patch
+Patch9:	    tree_hpp.patch
+Patch10:    %{name}-2.79-cuda.patch
 
 %{?_with_cuda:
 # CUDA 8 requires gcc < 6
@@ -54,62 +62,73 @@ BuildRequires:  cuda-gcc-c++
 BuildRequires:  cuda-devel >= %{min_cuda_version}
 }
 
-%{?_with_ffmpeg:
-BuildRequires:  ffmpeg-devel
-}
-
-BuildRequires:  alembic-devel
+# Development stuff
 BuildRequires:  boost-devel
 BuildRequires:  cmake
 BuildRequires:  desktop-file-utils
-BuildRequires:  esound-devel
 BuildRequires:  expat-devel
-BuildRequires:  fftw-devel
-BuildRequires:  fontpackages-devel
-BuildRequires:  freealut-devel
-BuildRequires:  freeglut-devel
-BuildRequires:  freetype-devel
-BuildRequires:  ftgl-devel
+BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  git
-BuildRequires:  glew-devel
-BuildRequires:  jack-audio-connection-kit-devel
 BuildRequires:  jemalloc-devel
-BuildRequires:  libao-devel
+BuildRequires:  libtool
+BuildRequires:  libspnav-devel
+BuildRequires:  libxml2-devel
+BuildRequires:  openssl-devel
+BuildRequires:  pcre-devel
+BuildRequires:  pugixml-devel
+BuildRequires:  python3-devel >= 3.5
+BuildRequires:  python3-numpy
+BuildRequires:  python3-requests
+BuildRequires:  subversion-devel
+
+# Compression stuff
+BuildRequires:  lzo-devel
+BuildRequires:  xz-devel
+BuildRequires:  zlib-devel
+BuildRequires:  minizip-devel
+
+# 3D modeling stuff
+BuildRequires:  fftw-devel
+BuildRequires:  ftgl-devel
+BuildRequires:  glew-devel
+BuildRequires:  freeglut-devel
 BuildRequires:  libGL-devel
 BuildRequires:  libGLU-devel
+BuildRequires:  libXi-devel
+BuildRequires:  openCOLLADA-devel >= svn825
+BuildRequires:  ode-devel
+BuildRequires:  SDL2-devel
+BuildRequires:  xorg-x11-proto-devel
+
+# Picture/Video stuff
+BuildRequires:  alembic-devel
+%{?_with_ffmpeg:
+BuildRequires:  compat-ffmpeg-devel
+}
 BuildRequires:  libjpeg-turbo-devel
-BuildRequires:  libogg-devel
 BuildRequires:  libpng-devel
-BuildRequires:  libsamplerate-devel
-BuildRequires:  libsndfile-devel
-BuildRequires:  libspnav-devel
 BuildRequires:  libtheora-devel
 BuildRequires:  libtiff-devel
-BuildRequires:  libtool
-BuildRequires:  libvorbis-devel
-BuildRequires:  libXi-devel
-BuildRequires:  libxml2-devel
-BuildRequires:  lzo-devel
-BuildRequires:  ode-devel
-BuildRequires:  openCOLLADA-devel >= svn825
 BuildRequires:  OpenColorIO-devel
 BuildRequires:  OpenEXR-devel
 BuildRequires:  OpenImageIO-devel
-BuildRequires:  openjpeg-devel
-BuildRequires:  openssl-devel
-BuildRequires:  openvdb-devel
-BuildRequires:  pcre-devel
-BuildRequires:  pkgconfig(python3)
-BuildRequires:  pugixml-devel
-BuildRequires:  python3-requests
-BuildRequires:  qhull-devel
-BuildRequires:  SDL2-devel
-BuildRequires:  subversion-devel
+BuildRequires:  openjpeg2-devel
+#BuildRequires:  openvdb-devel
 BuildRequires:  tbb-devel
-BuildRequires:  xorg-x11-proto-devel
-BuildRequires:  xz-devel
-BuildRequires:  zlib-devel
+
+# Audio stuff
+BuildRequires:  freealut-devel
+BuildRequires:  jack-audio-connection-kit-devel
+BuildRequires:  libao-devel
+BuildRequires:  libogg-devel
+BuildRequires:  libsamplerate-devel
+BuildRequires:  libsndfile-devel
+BuildRequires:  libvorbis-devel
+
+# Typography stuff
+BuildRequires:  fontpackages-devel
+BuildRequires:  freetype-devel
 
 # Appstream stuff
 BuildRequires:  libappstream-glib
@@ -171,6 +190,11 @@ Nvidia GPUs.
 %prep
 %autosetup -p1
 
+# Delete the bundled FindOpenJPEG to make find_package use the system version
+# instead (the local version hardcodes the openjpeg version so it is not update
+# proof)
+rm -f build_files/cmake/Modules/FindOpenJPEG.cmake
+
 mkdir cmake-make
 
 %build
@@ -217,10 +241,14 @@ export CXXFLAGS="$CXXFLAGS -mno-altivec"
     -DWITH_SDL=ON \
     -DWITH_SYSTEM_LZO=ON \
     -DWITH_SYSTEM_OPENJPEG=ON \
-    %{?_with_cuda:-DCUDA_NVCC_EXECUTABLE=%{_bindir}/nvcc} \
-    %{?_with_cuda:-DWITH_CYCLES_CUDA_BINARIES=ON} \
-    %{?_with_cuda:-DCYCLES_CUDA_BINARIES_ARCH="sm_30;sm_35;sm_37;sm_50;sm_52;sm_60;sm_61"}
+%if 0%{?_with_cuda}
+    -DCUDA_INCLUDE_DIRS:PATH=%{_includedir}/cuda \
+    -DCUDA_NVCC_EXECUTABLE=%{_bindir}/nvcc \
+    -DCYCLES_CUDA_BINARIES_ARCH="sm_30;sm_35;sm_37;sm_50;sm_52;sm_60;sm_61" \
+    -DWITH_CYCLES_CUDA_BINARIES=ON
+%endif
 
+#make VERBOSE=1 # %%{?_smp_mflags}
 %make_build
 popd
 
@@ -259,8 +287,8 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/%{name}-
 %post
 %if 0%{?rhel} == 7
 /usr/bin/update-desktop-database &> /dev/null || :
-/bin/touch --no-create %{_datadir}/mime/packages &> /dev/null || :
 /bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
+/bin/touch --no-create %{_datadir}/mime/packages &> /dev/null || :
 %endif
 
 %postun
@@ -314,80 +342,165 @@ fi
 }
 
 %changelog
-* Tue Nov 07 2017 Simone Caronni <negativo17@gmail.com> - 2:2.79-2
-- Use GCC 6.x for CUDA 9.
+* Tue May 01 2018 Simone Caronni <negativo17@gmail.com> - 2:2.79b-4
+- Rebase on Fedora SPEC file.
+- Use FFMpeg 3.4.
 
-* Thu Sep 21 2017 Simone Caronni <negativo17@gmail.com> - 2:2.79-1
+* Tue Apr 24 2018 Richard Shaw <hobbes1069@gmail.com> - 1:2.79b-3
+- Rebuild for openCOLLADA 1.6.62.
+
+* Thu Mar 29 2018 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.79b-2
+- Rebuild with applied upstream patches
+
+* Thu Mar 22 2018 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.79b-1
+- Update to 2.79b
+- Reenable openvdb
+
+* Wed Feb 28 2018 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.79a-1
+- Update to 2.79a
+- Add gcc-c++
+- Temporarily disable openvdb due failure to build
+- Upstream patch for compile fix with GCC 8.0
+
+* Mon Feb 26 2018 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.79-8
+- Rebuild for boost 1.66
+
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.79-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Wed Jan 17 2018 Sandro Mani <manisandro@gmail.com> - 1:2.79-6
+- Switch to openjpeg2
+
+* Sun Jan 07 2018 Richard Shaw <hobbes1069@gmail.com> - 1:2.79-5
+- Rebuild for OpenImageIO 1.8.7.
+
+* Sat Jan 06 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1:2.79-4
+- Remove obsolete scriptlets
+
+* Mon Dec 25 2017 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.79-3
+- Rebuilt for alembic 1.7.5
+
+* Sat Oct 28 2017 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.79-2
+- Rebuilt for alembic 1.7.4
+
+* Tue Sep 12 2017 Simone Caronni <negativo17@gmail.com> - 1:2.79-1
 - Update to 2.79.
 
-* Fri Apr 28 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-6
-- Use GCC 5.3 compatibility package instead of Clang for CUDA components (fix
-  build on Fedora 26+).
+* Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.78c-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
-* Tue Apr 25 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-5
-- Enable Alembic support.
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.78c-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
-* Mon Apr 24 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-4
-- Unconditionally build OpenVDB support
+* Sun Jul 23 2017 Björn Esser <besser82@fedoraproject.org> - 1:2.78c-6
+- Rebuilt for Boost 1.64
 
-* Fri Apr 21 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-3
+* Mon May 15 2017 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:2.78c-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_27_Mass_Rebuild
+
+* Wed Apr 26 2017 Simone Caronni <negativo17@gmail.com> - 1:2.78c-4
+- Enable OpenVDB and Alembic support.
+
+* Fri Apr 21 2017 Simone Caronni <negativo17@gmail.com> - 1:2.78c-3
 - Remove redundant fonts directory in blender-fonts package.
-- Require Clang < 3.9 for building CUDA 8 support.
+- Enable rebuilding of the package with FFmpeg support enabled.
 
-* Fri Apr 07 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-2
-- Merge in latest changes from Fedora.
+* Mon Mar 06 2017 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.78c-2
+- Restore broken international fonts support (rhbz#1429196)
 
-* Mon Feb 27 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78c-1
-- Update to 2.78c.
+* Mon Feb 27 2017 Luya Tshimbalanga <luya_tfz@thefinalzone.net> - 1:2.78c-1
+- New upstream release
+- Add modules directory macro
 
-* Sun Feb 12 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78b-1
-- Update to 2.78b.
+* Sat Feb 25 2017 Luya Tshimbalanga <luya_tfz@thefinalzone.net> - 1:2.78b-2
+- Patch for handling flickering UI on AMD GPUs (rhbz#1425146)
 
-* Wed Feb 01 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78a-11
-- Merge in SPEC file from Fedora.
-- Update scriptlets as per packaging guidelines.
-- Update patches.
+* Thu Feb 09 2017 Luya Tshimbalanga <luya_tfz@thefinalzone.net> - 1:2.78b-1
+- New upstream release
 
-* Sun Jan 29 2017 Simone Caronni <negativo17@gmail.com> - 2:2.78a-3
-- Improve font installation.
-- Update requirement.
-- Add fonts AppData.
-- Update GCC flags.
+* Tue Feb 07 2017 Luya Tshimbalanga <luya_tfz@thefinalzone.net> - 1:2.78a-12
+- Add presets for RPM macros
 
-* Thu Dec 01 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78a-2
-- Use Clang for CUDA kernels.
-- Bump Epoch.
+* Mon Feb 06 2017 Simone Caronni <negativo17@gmail.com> - 1:2.78a-11
+- Update RPM macros.
 
-* Thu Nov 03 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78a-1
-- Update to 2.78a.
-- Rename fonts-blender to blender-fonts as in the Fedora package.
-- Enable OpenVDB support.
-- Enable CUDA NVRTC support.
+* Wed Feb 01 2017 Simone Caronni <negativo17@gmail.com> - 1:2.78a-10
+- Adjust files section.
+- Use system lzo.
 
-* Fri Oct 14 2016 Simone Caronni <negativo17@gmail.com> - 1:2.78-1
-- Update to 2.78.
+* Mon Jan 30 2017 Simone Caronni <negativo17@gmail.com> - 1:2.78a-9
+- Use cmake macro.
+- Remove redundant GCC options.
+- Update scriptlets as per packaging guidelines (mimeinfo only on RHEL 7 and
+  Fedora 23, desktop database only on RHEL 7, Fedora 23 and 24).
 
-* Fri Jul 22 2016 Simone Caronni <negativo17@gmail.com> - 1:2.77a-2
-- Rebuild for ffmpeg 3.1.1.
+* Sun Jan 29 2017 Simone Caronni <negativo17@gmail.com> - 1:2.78a-8
+- Use system locale directory for translations. This also removes the warning
+  about duplicate translations at package assembly time.
+- Do not use the Blender API version in the installation folder.
+- Install noarch components in /usr/share/blender.
+- Install blender-thumbnailer.py in the scripts directory instead of deleting it.
 
-* Sun Jun 12 2016 Simone Caronni <negativo17@gmail.com> - 1:2.77a-1
-- Update to 2.77a, requires Python 3.5.
-- Rebase all patches.
+* Sun Jan 29 2017 Simone Caronni <negativo17@gmail.com> - 1:2.78a-7
+- Split out main AppStream metadata in its own file, like the fonts subpackage.
+- Make sure rpmlint does not fail when checking the SPEC file.
+- Simplify fonts packaging and fix font package rename upgrade.
+- Clean up build options (sorting, duplicates, obsolete options, etc.).
+- Enable buildinfo.
+- Remove manual installation of manpages and use CMake option.
+- Add blenderplayer man page.
+- Remove manual installation of icons, the install target is already installing
+  them in the same way.
+- Fix -std=c++11 warning during build.
 
-* Fri Dec 11 2015 Simone Caronni <negativo17@gmail.com> - 1:2.76-3
-- Add Debian patches, enable localization support.
-- Remove obsoletes/provides for blender-fonts (Fedora 10!).
+* Tue Jan 10 2017 Luya Tshimbalanga <luya_tfz@thefinalzone.net> - 1:2.78a-6
+- rebuilt
 
-* Fri Dec 11 2015 Simone Caronni <negativo17@gmail.com> - 1:2.76-2
-- Clean up and rework spec file (license, obsolete tags, redundant commands,
-  consistency in variable names, sorting, etc.).
-- Adjust CMake options.
-- Make CUDA build optional on x86_64.
-- Make FFMPeg build optional.
-- Make CUDA a subpackage that depends on the correct CUDA libraries.
-- Move appdata content from spec file to a separate file.
-- Enable OpenColorIO, FontConfig and RedCode support (bundled GPLv2 library that
-  only exist inside the Blender source).
+* Mon Dec 19 2016 Miro Hrončok <mhroncok@redhat.com> - 1:2.78a-5
+- Rebuild for Python 3.6
+
+* Sat Dec 17 2016 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.78a-4
+- Add minizip dependency (rhbz#1398451)
+
+* Sat Nov 12 2016 Mamoru TASAKA <mtasaka@fedoraproject.org> - 1:2.78a-3
+- Disable altivec support on ppc64le for now to avoid "bool" being converted
+  (bug 1393157)
+- Use __linux__ , gcc does not define __linux on ppc (gcc bug 28314)
+
+* Tue Nov 08 2016 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.78a-2
+- Corrected versioning of obsoleted fonts-blender (rhbz#1393006)
+
+* Thu Oct 27 2016 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.78a-1
+- New upstream release with several bug fixes
+
+* Thu Oct 20 2016 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.78-3
+- Added appdata for blender fonts
+- Fixed path for international fonts issue (rhbz#1382428)
+- Cleaned up and reworked spec file
+
+* Mon Oct 03 2016 Richard Shaw <hobbes1069@gmail.com> - 1:2.78-2
+- Rebuild for new OpenImageIO release.
+
+* Thu Sep 29 2016 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.78-1
+- New upstream release
+- Added pugixml as dependency
+
+* Fri Jul 29 2016 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.77a-1
+- New upstream release
+- Drop patches
+
+* Tue Feb 16 2016 Richard Shaw <hobbes1069@gmail.com> - 1:2.76-7
+- Rebuild for updated openCOLLADA.
+- Add patch for GCC 6 issues.
+
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.76-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Mon Jan 25 2016 Jochen Schmitt <Jochen herr-schmitt de> - 1:2.76-5
+- Rebuilt to fix dep. issues
+
+* Thu Jan 14 2016 Adam Jackson <ajax@redhat.com> - 1:2.76-4
+- Rebuild for glew 1.13
 
 * Tue Nov 10 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:2.76-2
 - Rebuilt for https://fedoraproject.org/wiki/Changes/python3.5
@@ -614,96 +727,3 @@ fi
 
 * Tue Jan 15 2013 Richard Shaw <hobbes1069@gmail.com> - 1:2.65a-2
 - Rebuild for updated OpenImageIO library.
-
-* Thu Dec 20 2012 Jochen Schmitt <Jochen herr-schmitt de> - 1:2.65a-1
-- New upstream release
-
-* Sat Dec 15 2012 Jochen Schmitt <JOchen herr-schmitt de> - 1:2.65-4
-- Fix SEGFAULT in blf_lang.c (#887413)
-
-* Fri Dec 14 2012 Jochen Schmitt <Jochen herr-schmitt de> - 1:2.65-3
-- Remove Req. to the DejaVu Sans font
-
-* Thu Dec 13 2012 Adam Jackson <ajax@redhat.com> - 1:2.65-2
-- Rebuild for glew 1.9.0
-
-* Tue Dec 11 2012 Jochen Schmitt <Jochen herr schmitt de> - 1:2.65-1
-- New upstream release
-
-* Mon Oct 29 2012 Dan Horák <dan[at]danny.cz> - 1:2.64a-3
-- fix build on big endian arches
-
-* Thu Oct 18 2012 Jochen Schmitt <Jochen herr-schmitt de> - 1:2.64a-2
-- Loading droid-sans font from /usr/share/fonts (#867205)
-
-* Tue Oct  9 2012 Jochen Schmitt <Jochen herr-schmitt de> - 1:2.64a-1
-- New minor upstream update release
-
-* Fri Oct  5 2012 Dan Horák <dan[at]danny.cz> - 1:2.64-2
-- fix build on non-x86 64-bit arches
-
-* Wed Oct  3 2012 Jochen Schmitt <Jochen herr-schmitt de> - 1:2.64-1
-- New upstream release
-
-* Fri Sep  7 2012 Jochen Schmitt <JOchen herr-schmitt de> - 1:2.63a-10
-- Add forgotten O_EXCL to CVE-patch
-
-* Thu Sep  6 2012 Jochen Schmitt <JOchen herr-schmitt de> - 1:2.63a-8
-- Porting blender-2.49b-cve.patch (#855092, CVE-2008-1103)
-
-* Fri Aug 10 2012 Richard Shaw <hobbes1069@gmail.com> - 1:2.63a-7
-- Rebuild for libboost 1.50.
-
-* Sat Aug 04 2012 David Malcolm <dmalcolm@redhat.com> - 1:2.63a-6
-- rebuild for https://fedoraproject.org/wiki/Features/Python_3.3
-
-* Wed Aug 01 2012 Adam Jackson <ajax@redhat.com> - 1:2.63a-5
-- -Rebuild for new glew
-
-* Sun Jul 29 2012 Jochen Schmitt <Jochen herr-schmitt de> - 1:2.63a-4
-- Rebult to fix broken dependencies
-
-* Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:2.63a-3
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
-
-* Tue Jun 26 2012 Richard Shaw <hobbes1069@gmail.com> 1:2.63a-2
-- Bump revision to be >= f17 for AutoQA.
-
-* Fri May 11 2012 Jochen Schmitt <Jochen herr-schmitt de> 1:2.63a-1
-- New upstream release
-
-* Fri Apr 27 2012 Jochen Schmitt <JOchen herr-schmitt de> 1:2.63-1
-- New upstream release
-
-* Wed Apr 25 2012 Jochen Schmitt <Jochen herr-schmitt de> 1:2.62-6
-- Fix crash in libspnav (#814665)
-
-* Tue Apr 24 2012 Jochen Schmitt <Jochen herr-schmitt de> 1:2.62-5
-- Add cycles support (#812354)
-
-* Fri Apr 13 2012 Jochen Schmitt <Jochen herr-schmitt de> 1:2.62-4
-- Add BR to libspnav-devel
-
-* Sun Mar 18 2012 Jochen Schmitt <Jochen herr-schmitt de> 1:2.62-3
-- Rebuild for new OpenImageIO release
-
-* Tue Feb 28 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> 1:2.62-2
-- Rebuilt for c++ ABI breakage
-
-* Thu Feb 16 2012 Jochen Schmitt <Jochen herr-schmitt de> 1:2.62-1
-- New upstream release
-
-* Fri Feb 10 2012 Petr Pisar <ppisar@redhat.com> 1:2.61-6
-- Rebuild against PCRE 8.30
-
-* Thu Feb 09 2012 Rex Dieter <rdieter@fedoraproject.org> 1:2.61-5
-- rebuild (openjpeg)
-
-* Thu Feb  9 2012 Jochen Schmitt <Jochen herr-schmitt de> 1:2.61-4
-- Remove unnecessary gcc-4.5 patch
-
-* Wed Feb  8 2012 Jochen Schmitt <Jochen herr-schmitt de> 1:2.61-3
-- Fix gcc-4.7 related issue
-
-* Thu Jan  5 2012 Jochen Schmitt <JOchen herr-schmitt de> 1:2.61-2
-- Fix typo in syspth patch (#771814)
