@@ -11,24 +11,35 @@
 %global cyclesflag OFF
 %endif
 
+%ifarch x86_64
+
+# Each CUDA ptxas invocation can consume more than 4 gb of memory, so limit the
+# number of parallel make jobs to something suitable for your system when the
+# CUDA build is enabled.
+%global _with_cuda 1
+%global cuda_version 9.1
+
+%endif
+
 # Enable this or rebuild the package with "--with=ffmpeg" to enable FFmpeg
 # support.
-# %%global _with_ffmpeg 1
+%global _with_ffmpeg 1
 
 # Enable this or rebuild the package with "--with=openvdb" to enable OpenVDB
 # support.
 # %%global _with_openvdb 1
 
 Name:       blender
-Epoch:      1
+Epoch:      2
 Version:    %{blender_api}
-Release:    6%{?dist}
+Release:    7%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
 
 Source0:    http://download.%{name}.org/source/%{name}-%{version}.tar.gz
+Source1:    %{name}player.1
 Source2:    %{name}-fonts.metainfo.xml
 Source5:    %{name}.xml
 Source6:    %{name}.appdata.xml
@@ -44,9 +55,16 @@ Patch6:     %{name}-2.79-openvdb3-abi.patch
 # Backported patch for openjpeg2 support from
 # https://lists.blender.org/pipermail/bf-blender-cvs/2016-July/088691.html
 # but without patch-updating the bundled openjpeg2 version
-Patch7:     blender-2.79-openjpeg2.patch
+Patch7:     %{name}-2.79-openjpeg2.patch
 Patch8:     util_sseb.patch
 Patch9:     tree_hpp.patch
+Patch10:    %{name}-2.79-cuda.patch
+
+%{?_with_cuda:
+# CUDA requires specific GCC
+BuildRequires:  cuda-gcc-c++
+BuildRequires:  cuda-devel >= %{cuda_version}
+}
 
 # Development stuff
 BuildRequires:  boost-devel
@@ -90,7 +108,7 @@ BuildRequires:  xorg-x11-proto-devel
 # Picture/Video stuff
 BuildRequires:  alembic-devel
 %{?_with_ffmpeg:
-BuildRequires:  ffmpeg-devel
+BuildRequires:  compat-ffmpeg-devel
 }
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  libpng-devel
@@ -162,6 +180,19 @@ Provides:       fonts-%{name} = %{?epoch:%{epoch}:}%{version}-%{release}
 This package contains an international Blender mono space font which is a
 composition of several mono space fonts to cover several character sets.
 
+%{?_with_cuda:
+%package cuda
+Summary:       CUDA support for Blender
+Requires:      %{name} = %{?epoch:%{epoch}:}%{version}-%{release}
+# It dynamically opens libcuda.so.1 and libnvrtc.so.8.0
+Requires:      nvidia-driver-cuda-libs%{?_isa}
+Requires:      cuda-nvrtc
+
+%description cuda
+This package contains CUDA support for Blender, to enable rendering on supported
+Nvidia GPUs.
+}
+
 %prep
 %autosetup -p1
 
@@ -169,6 +200,17 @@ composition of several mono space fonts to cover several character sets.
 # instead (the local version hardcodes the openjpeg version so it is not update
 # proof)
 rm -f build_files/cmake/Modules/FindOpenJPEG.cmake
+
+%{?_with_ffmpeg:
+sed -i -e 's|/include/ffmpeg|/include/compat-ffmpeg|g' build_files/cmake/platform/platform_unix.cmake
+}
+
+%{?_with_cuda:
+sed -i \
+    -e 's|libcuda.so|libcuda.so.1|g' \
+    -e 's|libnvrtc.so|libnvrtc.so.%{cuda_version}|g' \
+    extern/cuew/src/cuew.c
+}
 
 mkdir cmake-make
 
@@ -214,7 +256,12 @@ export CXXFLAGS="$CXXFLAGS -mno-altivec"
     -DWITH_PYTHON_SAFETY=ON \
     -DWITH_SDL=ON \
     -DWITH_SYSTEM_LZO=ON \
-    -DWITH_SYSTEM_OPENJPEG=ON
+    -DWITH_SYSTEM_OPENJPEG=ON \
+%if 0%{?_with_cuda}
+    -DCUDA_NVCC_EXECUTABLE=%{_bindir}/nvcc \
+    -DCYCLES_CUDA_BINARIES_ARCH="sm_30;sm_35;sm_37;sm_50;sm_52;sm_60;sm_61" \
+    -DWITH_CYCLES_CUDA_BINARIES=ON
+%endif
 
 #make VERBOSE=1 # %%{?_smp_mflags}
 %make_build
@@ -284,6 +331,7 @@ fi
 %{_datadir}/appdata/%{name}.appdata.xml
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/%{name}/
+%exclude %{_datadir}/%{name}/scripts/addons/cycles/lib/*.cubin
 %{_datadir}/icons/hicolor/*/apps/%{name}.*
 %{_datadir}/mime/packages/%{name}.xml
 %{_mandir}/man1/%{name}.*
@@ -303,7 +351,15 @@ fi
 %{_datadir}/metainfo/%{name}-fonts.metainfo.xml
 %{_fontbasedir}/%{name}/
 
+%{?_with_cuda:
+%files cuda
+%{_datadir}/%{name}/scripts/addons/cycles/lib/*.cubin
+}
+
 %changelog
+* Tue Jul 17 2018 Simone Caronni <negativo17@gmail.com> - 2:2.79b-7
+- Rebase on Fedora SPEC file.
+
 * Tue Jul 17 2018 Simone Caronni <negativo17@gmail.com> - 1:2.79b-6
 - Allow rebuilding with OpenVDB support.
 - Be consistent with spaces/tabs (rpmlint).
