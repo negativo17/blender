@@ -17,7 +17,7 @@
 # number of parallel make jobs to something suitable for your system when the
 # CUDA build is enabled.
 %global _with_cuda 1
-%global cuda_version 9.1
+%global cuda_version 9.2
 
 %endif
 
@@ -32,7 +32,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}
-Release:    7%{?dist}
+Release:    8%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -58,11 +58,11 @@ Patch6:     %{name}-2.79-openvdb3-abi.patch
 Patch7:     %{name}-2.79-openjpeg2.patch
 Patch8:     util_sseb.patch
 Patch9:     tree_hpp.patch
-Patch10:    %{name}-2.79-cuda.patch
 
 %{?_with_cuda:
-# CUDA requires specific GCC
+%if 0%{?fedora} >= 28
 BuildRequires:  cuda-gcc-c++
+%endif
 BuildRequires:  cuda-devel >= %{cuda_version}
 }
 
@@ -210,6 +210,15 @@ sed -i \
     -e 's|libcuda.so|libcuda.so.1|g' \
     -e 's|libnvrtc.so|libnvrtc.so.%{cuda_version}|g' \
     extern/cuew/src/cuew.c
+
+sed -i -e \
+%if 0%{?fedora} >= 28
+    's|${CUDA_NVCC_FLAGS}|-I/usr/include/cuda -ccbin /usr/bin/cuda-g++|g' \
+%else
+    's|${CUDA_NVCC_FLAGS}|-I/usr/include/cuda|g' \
+%endif
+    intern/cycles/kernel/CMakeLists.txt
+
 }
 
 mkdir cmake-make
@@ -357,6 +366,9 @@ fi
 }
 
 %changelog
+* Thu Aug 30 2018 Simone Caronni <negativo17@gmail.com> - 2:2.79b-8
+- Rebuild for CUDA 9.2.
+
 * Tue Jul 17 2018 Simone Caronni <negativo17@gmail.com> - 2:2.79b-7
 - Rebase on Fedora SPEC file.
 
