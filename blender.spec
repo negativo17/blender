@@ -58,6 +58,8 @@ Patch6:     %{name}-2.79-openvdb3-abi.patch
 Patch7:     %{name}-2.79-openjpeg2.patch
 Patch8:     util_sseb.patch
 Patch9:     tree_hpp.patch
+# Backported from https://developer.blender.org/rB1db47a2ccd1e68994bf8140eba6cc2a26a2bc91f
+Patch10:     %{name}-2.79-python37.patch
 
 %{?_with_cuda:
 %if 0%{?fedora} >= 28
@@ -372,6 +374,7 @@ fi
 %changelog
 * Mon Nov 05 2018 Simone Caronni <negativo17@gmail.com> - 2:2.79b-9
 - Update build requirements for Fedora 29.
+- Apply workaround for "no text in GUI" bug (#1631922).
 
 * Thu Aug 30 2018 Simone Caronni <negativo17@gmail.com> - 2:2.79b-8
 - Rebuild for CUDA 9.2.
