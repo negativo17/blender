@@ -92,7 +92,7 @@ BuildRequires:  subversion-devel
 BuildRequires:  lzo-devel
 BuildRequires:  xz-devel
 BuildRequires:  zlib-devel
-%if 0%{?fedora} >= 29
+%if 0%{?fedora} >= 30
 BuildRequires:  minizip-compat-devel
 %else
 BuildRequires:  minizip-devel
