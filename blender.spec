@@ -32,7 +32,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}
-Release:    8%{?dist}
+Release:    9%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -90,7 +90,11 @@ BuildRequires:  subversion-devel
 BuildRequires:  lzo-devel
 BuildRequires:  xz-devel
 BuildRequires:  zlib-devel
+%if 0%{?fedora} >= 29
+BuildRequires:  minizip-compat-devel
+%else
 BuildRequires:  minizip-devel
+%endif
 
 # 3D modeling stuff
 BuildRequires:  fftw-devel
@@ -366,6 +370,9 @@ fi
 }
 
 %changelog
+* Mon Nov 05 2018 Simone Caronni <negativo17@gmail.com> - 2:2.79b-9
+- Update build requirements for Fedora 29.
+
 * Thu Aug 30 2018 Simone Caronni <negativo17@gmail.com> - 2:2.79b-8
 - Rebuild for CUDA 9.2.
 
