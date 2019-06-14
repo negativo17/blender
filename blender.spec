@@ -32,7 +32,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}
-Release:    17%{?dist}
+Release:    18%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -382,6 +382,9 @@ fi
 }
 
 %changelog
+* Fri Jun 14 2019 Simone Caronni <negativo17@gmail.com> - 2:2.79b-18
+- Rebuild for alembic 1.7.11.
+
 * Sun May 12 2019 Simone Caronni <negativo17@gmail.com> - 2:2.79b-17
 - Rebase on Fedora SPEC file.
 - Fix build for GCC9 new OpenMP data sharing
