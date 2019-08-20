@@ -27,12 +27,12 @@
 
 # Enable this or rebuild the package with "--with=openvdb" to enable OpenVDB
 # support.
-# %%global _with_openvdb 1
+%global _with_openvdb 1
 
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}
-Release:    5%{?dist}
+Release:    6%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -112,9 +112,7 @@ BuildRequires:  OpenColorIO-devel
 BuildRequires:  OpenEXR-devel
 BuildRequires:  OpenImageIO-devel
 BuildRequires:  openjpeg2-devel
-%{?_with_openvdb:
 BuildRequires:  openvdb-devel
-}
 BuildRequires:  tbb-devel
 
 # Audio stuff
@@ -245,7 +243,8 @@ pushd cmake-make
     -DWITH_MOD_OCEANSIM=ON \
     -DWITH_OPENCOLLADA=ON \
     -DWITH_OPENCOLORIO=ON \
-    %{?_with_openvdb:-DWITH_OPENVDB=ON -DWITH_OPENVDB_BLOSC=ON} \
+    -DWITH_OPENVDB=ON \
+    -DWITH_OPENVDB_BLOSC=ON} \
     -DWITH_PYTHON=ON \
     -DWITH_PYTHON_INSTALL=OFF \
     -DWITH_PYTHON_INSTALL_REQUESTS=OFF \
@@ -371,6 +370,9 @@ fi
 }
 
 %changelog
+* Tue Aug 20 2019 Simone Caronni <negativo17@gmail.com> - 2:2.80-6
+- Enable OpenVDB.
+
 * Sun Aug 18 2019 Simone Caronni <negativo17@gmail.com> - 1:2.80-5
 - Clean up patches/sources.
 - Fix installation of locales, scripts, thumbnailer, etc.
