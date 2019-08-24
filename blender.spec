@@ -112,7 +112,9 @@ BuildRequires:  OpenColorIO-devel
 BuildRequires:  OpenEXR-devel
 BuildRequires:  OpenImageIO-devel
 BuildRequires:  openjpeg2-devel
+%if 0%{?fedora} >= 30 || 0%{?rhel} >= 8
 BuildRequires:  openvdb-devel
+%endif
 BuildRequires:  tbb-devel
 
 # Audio stuff
@@ -243,8 +245,10 @@ pushd cmake-make
     -DWITH_MOD_OCEANSIM=ON \
     -DWITH_OPENCOLLADA=ON \
     -DWITH_OPENCOLORIO=ON \
+%if 0%{?fedora} >= 30 || 0%{?rhel} >= 8
     -DWITH_OPENVDB=ON \
     -DWITH_OPENVDB_BLOSC=ON} \
+%endif
     -DWITH_PYTHON=ON \
     -DWITH_PYTHON_INSTALL=OFF \
     -DWITH_PYTHON_INSTALL_REQUESTS=OFF \
