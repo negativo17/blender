@@ -25,14 +25,10 @@
 # support.
 %global _with_ffmpeg 1
 
-# Enable this or rebuild the package with "--with=openvdb" to enable OpenVDB
-# support.
-%global _with_openvdb 1
-
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}
-Release:    6%{?dist}
+Release:    10%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -42,7 +38,6 @@ Source0:    http://download.%{name}.org/source/%{name}-%{version}.tar.gz
 Source1:    %{name}.thumbnailer
 Source2:    %{name}-fonts.metainfo.xml
 Source5:    %{name}.xml
-Source6:    %{name}.appdata.xml
 Source10:   macros.%{name}
 
 Patch0:     %{name}-2.80-droid.patch
@@ -227,7 +222,7 @@ pushd cmake-make
     -DBOOST_ROOT=%{_prefix} \
     -DBUILD_SHARED_LIBS=OFF \
     -DCMAKE_SKIP_RPATH=ON \
-    -DPYTHON_VERSION=$(%{__python3} -c "import sys ; print(sys.version[:3])") \
+    -DPYTHON_VERSION=%{python3_version} \
     -DOpenGL_GL_PREFERENCE=GLVND \
     -DWITH_ALEMBIC=ON \
     -DWITH_BUILDINFO=ON \
@@ -245,9 +240,10 @@ pushd cmake-make
     -DWITH_MOD_OCEANSIM=ON \
     -DWITH_OPENCOLLADA=ON \
     -DWITH_OPENCOLORIO=ON \
+    -DWITH_OPENSUBDIV=ON \
 %if 0%{?fedora} >= 30 || 0%{?rhel} >= 8
     -DWITH_OPENVDB=ON \
-    -DWITH_OPENVDB_BLOSC=ON} \
+    -DWITH_OPENVDB_BLOSC=ON \
 %endif
     -DWITH_PYTHON=ON \
     -DWITH_PYTHON_INSTALL=OFF \
@@ -270,6 +266,7 @@ pushd cmake-make
 %make_install
 popd
 
+
 # Thumbnailer
 install -p -D -m 644 %{SOURCE1} %{buildroot}%{_datadir}/thumbnailers/%{name}.thumbnailer
 
@@ -289,7 +286,8 @@ sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE10} > %{buildroot}%{macrosdir}/mac
 %if 0%{?fedora} || 0%{?rhel} >= 8
 
 # AppData
-install -p -m 644 -D %{SOURCE6} %{buildroot}%{_metainfodir}/%{name}.appdata.xml
+install -p -m 644 -D release/freedesktop/org.%{name}.Blender.appdata.xml \
+          %{buildroot}%{_metainfodir}/%{name}.appdata.xml
 install -p -m 644 -D %{SOURCE2} %{buildroot}%{_metainfodir}/%{name}-fonts.metainfo.xml
 
 %endif
@@ -374,8 +372,22 @@ fi
 }
 
 %changelog
-* Tue Aug 20 2019 Simone Caronni <negativo17@gmail.com> - 2:2.80-6
+* Sun Oct 13 2019 Simone Caronni <negativo17@gmail.com> - 2:2.80-10
+- Actually re-enable OpenVDB.
+
+* Tue Sep 24 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.80-9
+- Enable OpenSubDiv (rhbz#1754797)
+- Rebuilt for openvdb 6.2.0
+- Use provided upsteam metadata
+
+* Thu Aug 22 2019 Miro Hrončok <mhroncok@redhat.com> - 1:2.80-8
+- Rebuilt for Python 3.8
+
+* Mon Aug 19 2019 Simone Caronni <negativo17@gmail.com> - 1:2.80-7
 - Enable OpenVDB.
+
+* Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 1:2.80-6
+- Rebuilt for Python 3.8
 
 * Sun Aug 18 2019 Simone Caronni <negativo17@gmail.com> - 1:2.80-5
 - Clean up patches/sources.
