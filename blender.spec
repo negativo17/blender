@@ -28,7 +28,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}
-Release:    10%{?dist}
+Release:    14%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -43,6 +43,9 @@ Source10:   macros.%{name}
 Patch0:     %{name}-2.80-droid.patch
 # https://sources.debian.org/patches/blender/2.80+dfsg-2/0006-add_ppc64el-s390x_support.patch/
 Patch1:     %{name}-2.80-add_ppc64el-s390x_support.patch
+# Python 3.8 Compatibility fix (thank you Marcel Plch)
+# https://developer.blender.org/D6038?id=18922
+Patch2:     %{name}-2.80-fix_compatibility_python-3.8.patch
 
 %{?_with_cuda:
 %if 0%{?fedora} >= 30
@@ -90,6 +93,9 @@ BuildRequires:  libGLU-devel
 BuildRequires:  libXi-devel
 BuildRequires:  openCOLLADA-devel >= svn825
 BuildRequires:  ode-devel
+%if 0%{?fedora} >= 31 || 0%{?rhel} >= 8
+BuildRequires:  opensubdiv-devel
+%endif
 BuildRequires:  SDL2-devel
 BuildRequires:  xorg-x11-proto-devel
 
@@ -150,7 +156,7 @@ secure, multi-platform content to the web, CD-ROMs, and other media.
 #Summary:        Standalone Blender player
 #Provides:       %%{name}(ABI) = %%{blender_api}
 
-#%description -n blenderplayer
+#%%description -n blenderplayer
 #This package contains a stand alone release of the Blender player. You will need
 #this package to play games which are based on the Blender Game Engine.
 
@@ -240,8 +246,8 @@ pushd cmake-make
     -DWITH_MOD_OCEANSIM=ON \
     -DWITH_OPENCOLLADA=ON \
     -DWITH_OPENCOLORIO=ON \
-    -DWITH_OPENSUBDIV=ON \
 %if 0%{?fedora} >= 30 || 0%{?rhel} >= 8
+    -DWITH_OPENSUBDIV=ON \
     -DWITH_OPENVDB=ON \
     -DWITH_OPENVDB_BLOSC=ON \
 %endif
@@ -300,7 +306,7 @@ rm -fr %{buildroot}%{_datadir}/%{blender_api}/locale/languages
 
 # rpmlint fixes
 find %{buildroot}%{_datadir}/%{name}/%{blender_api}/scripts -name "*.py" -exec chmod 755 {} \;
-#find %{buildroot}%{_datadir}/%{name}/scripts -type f -exec sed -i -e 's/\r$//g' {} \;
+#find %%{buildroot}%%{_datadir}/%%{name}/scripts -type f -exec sed -i -e 's/\r$//g' {} \;
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 
@@ -372,7 +378,19 @@ fi
 }
 
 %changelog
-* Sun Oct 13 2019 Simone Caronni <negativo17@gmail.com> - 2:2.80-10
+* Sat Nov 16 2019 Simone Caronni <negativo17@gmail.com> - 2:2.80-14
+- Merge from Fedora SPEC file.
+
+* Sun Nov 03 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.80-13
+- Rebuilt for alembic 1.7.12
+
+* Sat Nov 02 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.80-12
+- Rebuilt with opensubdiv
+
+* Wed Oct 16 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.80-11
+- Upstream patch fixing compatibility with python 3.8
+
+* Sun Oct 13 2019 Simone Caronni <negativo17@gmail.com> - 1:2.80-10
 - Actually re-enable OpenVDB.
 
 * Tue Sep 24 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.80-9
