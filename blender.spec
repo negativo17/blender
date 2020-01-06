@@ -1,4 +1,4 @@
-%global blender_api 2.80
+%global blender_api 2.81
 
 # Turn off the brp-python-bytecompile script
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
@@ -27,25 +27,26 @@
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}
-Release:    14%{?dist}
+Version:    %{blender_api}a
+Release:    1%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
 
-Source0:    http://download.%{name}.org/source/%{name}-%{version}.tar.gz
+Source0:    http://download.%{name}.org/source/%{name}-%{version}.tar.xz
 Source1:    %{name}.thumbnailer
 Source2:    %{name}-fonts.metainfo.xml
 Source5:    %{name}.xml
 Source10:   macros.%{name}
 
-Patch0:     %{name}-2.80-droid.patch
-# https://sources.debian.org/patches/blender/2.80+dfsg-2/0006-add_ppc64el-s390x_support.patch/
-Patch1:     %{name}-2.80-add_ppc64el-s390x_support.patch
-# Python 3.8 Compatibility fix (thank you Marcel Plch)
-# https://developer.blender.org/D6038?id=18922
-Patch2:     %{name}-2.80-fix_compatibility_python-3.8.patch
+Patch0:     %{name}-%{version}-droid.patch
+# Add missing ppc64le support
+Patch1:     %{name}-%{version}-add_ppc64le_support.patch
+# Appdata has open li tag, remove it
+Patch2:     %{name}-%{version}-appdata-fix-tags.patch
+# Fix python 3.8 compatiblity
+Patch3:     %{name}-2.80-fix_compatibility_python-3.8.patch
 
 %{?_with_cuda:
 %if 0%{?fedora} >= 30
@@ -67,6 +68,7 @@ BuildRequires:  jemalloc-devel
 BuildRequires:  libtool
 BuildRequires:  libspnav-devel
 BuildRequires:  libxml2-devel
+BuildRequires:  libXxf86vm-devel
 BuildRequires:  openssl-devel
 BuildRequires:  pcre-devel
 BuildRequires:  pugixml-devel
@@ -83,6 +85,7 @@ BuildRequires:  zlib-devel
 # 3D modeling stuff
 %ifarch x86_64
 BuildRequires:  embree-devel
+BuildRequires:  oidn-devel
 %endif
 BuildRequires:  fftw-devel
 BuildRequires:  ftgl-devel
@@ -91,6 +94,7 @@ BuildRequires:  freeglut-devel
 BuildRequires:  libGL-devel
 BuildRequires:  libGLU-devel
 BuildRequires:  libXi-devel
+BuildRequires:  libXrender-devel
 BuildRequires:  openCOLLADA-devel >= svn825
 BuildRequires:  ode-devel
 %if 0%{?fedora} >= 31 || 0%{?rhel} >= 8
@@ -126,6 +130,7 @@ BuildRequires:  libogg-devel
 BuildRequires:  libsamplerate-devel
 BuildRequires:  libsndfile-devel
 BuildRequires:  libvorbis-devel
+BuildRequires:  opus-devel
 
 # Typography stuff
 BuildRequires:  fontpackages-devel
@@ -144,6 +149,9 @@ Requires:       fontpackages-filesystem
 Requires:       python3-numpy
 Requires:       python3-requests
 Provides:       blender(ABI) = %{blender_api}
+
+# Temporarily exclude arnv7hl and ppc64le  due to failure to build
+ExcludeArch:  ppc64le armv7hl
 
 %description
 Blender is the essential software solution you need for 3D, from modeling,
@@ -224,6 +232,7 @@ pushd cmake-make
 %cmake .. \
 %ifnarch %{ix86} x86_64
     -DWITH_RAYOPTIMIZATION=OFF \
+    -DWITH_OIDN=ON \
 %endif
     -DBOOST_ROOT=%{_prefix} \
     -DBUILD_SHARED_LIBS=OFF \
@@ -292,9 +301,14 @@ sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE10} > %{buildroot}%{macrosdir}/mac
 %if 0%{?fedora} || 0%{?rhel} >= 8
 
 # AppData
+mkdir - %{buildroot}%{_metainfodir}
+
 install -p -m 644 -D release/freedesktop/org.%{name}.Blender.appdata.xml \
           %{buildroot}%{_metainfodir}/%{name}.appdata.xml
 install -p -m 644 -D %{SOURCE2} %{buildroot}%{_metainfodir}/%{name}-fonts.metainfo.xml
+
+
+
 
 %endif
 
@@ -378,8 +392,26 @@ fi
 }
 
 %changelog
-* Sat Nov 16 2019 Simone Caronni <negativo17@gmail.com> - 2:2.80-14
+* Mon Jan 06 2020 Simone Caronni <negativo17@gmail.com> - 2:2.81a-1
 - Merge from Fedora SPEC file.
+
+* Sat Dec 14 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.81a-3
+- Rebuild for openvdb 7.0.0
+
+* Thu Dec 12 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.81a-2
+- Rebuilt for openvdb 7.0.0
+
+* Thu Dec 05 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.81a-1
+- Update to 2.81a
+
+* Thu Nov 21 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.81-2
+- Temporarily exclude ppc64le and armv7hl architectures due to failure
+
+* Thu Nov 21 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.81-1
+- Update to 2.81
+- Drop upstream patch
+- Enable oidn support for x86_64 architecture 
+- Patch on appdata fixing tags
 
 * Sun Nov 03 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.80-13
 - Rebuilt for alembic 1.7.12
