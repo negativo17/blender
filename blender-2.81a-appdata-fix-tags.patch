@@ -1,0 +1,14 @@
+--- blender-2.81.old/release/freedesktop/org.blender.Blender.appdata.xml	2019-10-21 07:04:54.000000000 -0700
++++ blender-2.81/release/freedesktop/org.blender.Blender.appdata.xml	2019-11-23 10:25:46.249776396 -0800
+@@ -50,10 +50,9 @@
+                     <li>Revamped shaders for texturing</li>
+                     <li>Cycles denoising with OpenImageDenoise and NVIDIA RTX support</li>
+                     <li>Library overrides to make local overrides to linked characters and other data</li>
+-                    <li>
+                 </ul>
+-                <ul>
+                 <p>Enhancements:</p>
++                <ul>
+                     <li>Eevee shadows, transparency and bump mapping redesigned</li>
+                     <li>Viewport options for look development with Cycles and Eevee</li>
+                     <li>Finer control over rotations and scale in bones, constraints and drivers</li>
