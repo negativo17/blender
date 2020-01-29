@@ -28,7 +28,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}a
-Release:    1%{?dist}
+Release:    7%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -57,84 +57,85 @@ BuildRequires:  cuda-devel >= %{cuda_version}
 
 # Development stuff
 BuildRequires:  boost-devel
-BuildRequires:  blosc-devel
 BuildRequires:  cmake
 BuildRequires:  desktop-file-utils
-BuildRequires:  expat-devel
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  git
-BuildRequires:  jemalloc-devel
 BuildRequires:  libtool
 BuildRequires:  libspnav-devel
-BuildRequires:  libxml2-devel
-BuildRequires:  libXxf86vm-devel
-BuildRequires:  openssl-devel
-BuildRequires:  pcre-devel
+BuildRequires:  pkgconfig(blosc)
+BuildRequires:  pkgconfig(expat)
+BuildRequires:  pkgconfig(jemalloc)
+BuildRequires:  pkgconfig(libpcre)
+BuildRequires:  pkgconfig(libxml-2.0)
+BuildRequires:  pkgconfig(openssl)
+BuildRequires:  pkgconfig(python3) >= 3.5
+BuildRequires:  pkgconfig(xxf86vm)
 BuildRequires:  pugixml-devel
-BuildRequires:  python3-devel >= 3.5
 BuildRequires:  python3-numpy
 BuildRequires:  python3-requests
 BuildRequires:  subversion-devel
 
 # Compression stuff
 BuildRequires:  lzo-devel
-BuildRequires:  xz-devel
-BuildRequires:  zlib-devel
+BuildRequires:  pkgconfig(liblzma)
+BuildRequires:  pkgconfig(zlib)
 
 # 3D modeling stuff
 %ifarch x86_64
 BuildRequires:  embree-devel
 BuildRequires:  oidn-devel
 %endif
-BuildRequires:  fftw-devel
-BuildRequires:  ftgl-devel
-BuildRequires:  glew-devel
-BuildRequires:  freeglut-devel
-BuildRequires:  libGL-devel
-BuildRequires:  libGLU-devel
-BuildRequires:  libXi-devel
-BuildRequires:  libXrender-devel
 BuildRequires:  openCOLLADA-devel >= svn825
-BuildRequires:  ode-devel
-%if 0%{?fedora} >= 31 || 0%{?rhel} >= 8
-BuildRequires:  opensubdiv-devel
+BuildRequires:  pkgconfig(fftw3)
+BuildRequires:  pkgconfig(ftgl)
+BuildRequires:  pkgconfig(glew)
+
+%if 0%{?fedora} > 31
+BuildRequires:  pkgconfig(glut)
+%else
+BuildRequires:  pkgconfig(freeglut)
 %endif
-BuildRequires:  SDL2-devel
-BuildRequires:  xorg-x11-proto-devel
+BuildRequires:  pkgconfig(gl)
+BuildRequires:  pkgconfig(glu)
+BuildRequires:  pkgconfig(xi)
+BuildRequires:  pkgconfig(xrender)
+BuildRequires:  pkgconfig(ode)
+BuildRequires:  opensubdiv-devel
+BuildRequires:  pkgconfig(sdl2)
+BuildRequires:  pkgconfig(xproto)
 
 # Picture/Video stuff
 BuildRequires:  alembic-devel
 %{?_with_ffmpeg:
 BuildRequires:  ffmpeg-devel
 }
-BuildRequires:  libjpeg-turbo-devel
-BuildRequires:  libpng-devel
-BuildRequires:  libtheora-devel
-BuildRequires:  libtiff-devel
-BuildRequires:  libwebp-devel
-BuildRequires:  OpenColorIO-devel
-BuildRequires:  OpenEXR-devel
-BuildRequires:  OpenImageIO-devel
-BuildRequires:  openjpeg2-devel
-%if 0%{?fedora} >= 30 || 0%{?rhel} >= 8
 BuildRequires:  openvdb-devel
-%endif
-BuildRequires:  tbb-devel
+BuildRequires:  pkgconfig(libjpeg)
+BuildRequires:  pkgconfig(libpng)
+BuildRequires:  pkgconfig(theora)
+BuildRequires:  pkgconfig(libtiff-4)
+BuildRequires:  pkgconfig(libwebp)
+BuildRequires:  pkgconfig(OpenColorIO)
+BuildRequires:  pkgconfig(OpenEXR)
+BuildRequires:  pkgconfig(OpenImageIO)
+BuildRequires:  pkgconfig(libopenjp2)
+BuildRequires:  pkgconfig(tbb)
 
 # Audio stuff
-BuildRequires:  freealut-devel
-BuildRequires:  jack-audio-connection-kit-devel
-BuildRequires:  libao-devel
-BuildRequires:  libogg-devel
-BuildRequires:  libsamplerate-devel
-BuildRequires:  libsndfile-devel
-BuildRequires:  libvorbis-devel
-BuildRequires:  opus-devel
+BuildRequires:  pkgconfig(freealut)
+BuildRequires:  pkgconfig(jack)
+BuildRequires:  pkgconfig(ao)
+BuildRequires:  pkgconfig(ogg)
+BuildRequires:  pkgconfig(samplerate)
+BuildRequires:  pkgconfig(sndfile)
+BuildRequires:  pkgconfig(vorbis)
+BuildRequires:  pkgconfig(opus)
 
 # Typography stuff
 BuildRequires:  fontpackages-devel
-BuildRequires:  freetype-devel
+BuildRequires:  pkgconfig(freetype2)
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 
@@ -232,7 +233,6 @@ pushd cmake-make
 %cmake .. \
 %ifnarch %{ix86} x86_64
     -DWITH_RAYOPTIMIZATION=OFF \
-    -DWITH_OIDN=ON \
 %endif
     -DBOOST_ROOT=%{_prefix} \
     -DBUILD_SHARED_LIBS=OFF \
@@ -247,7 +247,6 @@ pushd cmake-make
     -DWITH_CYCLES=%{cyclesflag} \
     -DWITH_DOC_MANPAGE=ON \
     -DWITH_FFTW3=ON \
-    -DWITH_IMAGE_OPENJPEG=ON \
     -DWITH_INPUT_NDOF=ON \
     -DWITH_INSTALL_PORTABLE=OFF \
     -DWITH_JACK=ON \
@@ -255,11 +254,11 @@ pushd cmake-make
     -DWITH_MOD_OCEANSIM=ON \
     -DWITH_OPENCOLLADA=ON \
     -DWITH_OPENCOLORIO=ON \
-%if 0%{?fedora} >= 30 || 0%{?rhel} >= 8
+    -DWITH_IMAGE_OPENEXR=ON \
+    -DWITH_OPENIMAGEDENOISE=ON \
     -DWITH_OPENSUBDIV=ON \
     -DWITH_OPENVDB=ON \
     -DWITH_OPENVDB_BLOSC=ON \
-%endif
     -DWITH_PYTHON=ON \
     -DWITH_PYTHON_INSTALL=OFF \
     -DWITH_PYTHON_INSTALL_REQUESTS=OFF \
@@ -392,8 +391,19 @@ fi
 }
 
 %changelog
-* Mon Jan 06 2020 Simone Caronni <negativo17@gmail.com> - 2:2.81a-1
-- Merge from Fedora SPEC file.
+* Wed Jan 29 2020 Simone Caronni <negativo17@gmail.com> - 2:2.81a-7
+- Merge in changes from Fedora.
+
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.81a-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
+* Mon Jan 27 2020 Richard Shaw <hobbes1069@gmail.com> - 1:2.81a-5
+- Rebuild for OpenImageIO 2.1.10.1.
+
+* Fri Jan 24 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.81a-4
+- Use pkgconfig for many build requirements as possible
+- Replace pkgconfig(freeglut) by pkgconfig(glut) for Fedora 32 and above
+- Enable OpenImageDenoise support (rhbz #1794521)
 
 * Sat Dec 14 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.81a-3
 - Rebuild for openvdb 7.0.0
