@@ -1,10 +1,9 @@
---- blender-2.81.old/release/freedesktop/org.blender.Blender.appdata.xml	2019-10-21 07:04:54.000000000 -0700
-+++ blender-2.81/release/freedesktop/org.blender.Blender.appdata.xml	2019-11-23 10:25:46.249776396 -0800
-@@ -50,10 +50,9 @@
-                     <li>Revamped shaders for texturing</li>
+diff -ru blender-2.82a.orig/release/freedesktop/org.blender.Blender.appdata.xml blender-2.82a/release/freedesktop/org.blender.Blender.appdata.xml
+--- blender-2.82a.orig/release/freedesktop/org.blender.Blender.appdata.xml	2020-03-11 04:00:49.000000000 -0700
++++ blender-2.82a/release/freedesktop/org.blender.Blender.appdata.xml	2020-03-14 22:26:23.301013476 -0700
+@@ -71,8 +71,8 @@
                      <li>Cycles denoising with OpenImageDenoise and NVIDIA RTX support</li>
                      <li>Library overrides to make local overrides to linked characters and other data</li>
--                    <li>
                  </ul>
 -                <ul>
                  <p>Enhancements:</p>

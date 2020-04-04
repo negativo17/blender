@@ -9,6 +9,6 @@
 		<p>A set of international blender mono space font to cover several characters.</p>
 		<p>These fonts are mainly used for the interface of Blender 3D.</p>
 	</description>
-	<url type="homepage">http://www.blender.org</url>
+	<url type="homepage">https://www.blender.org</url>
 	<updatecontact>luya@fedoraproject.org</updatecontact>
 </component>
