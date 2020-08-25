@@ -1,0 +1,46 @@
+diff -Naur blender-2.83.5.old/intern/cycles/kernel/CMakeLists.txt blender-2.83.5/intern/cycles/kernel/CMakeLists.txt
+--- blender-2.83.5.old/intern/cycles/kernel/CMakeLists.txt	2020-08-26 11:36:23.281626578 +0200
++++ blender-2.83.5/intern/cycles/kernel/CMakeLists.txt	2020-08-26 15:50:30.965956176 +0200
+@@ -424,11 +424,16 @@
+       -D CCL_NAMESPACE_END=
+       -D NVCC
+       -m ${CUDA_BITS}
++      -I ${CUDA_INCLUDE_DIR}
+       -I ${CMAKE_CURRENT_SOURCE_DIR}/..
+       -I ${CMAKE_CURRENT_SOURCE_DIR}/kernels/cuda
+       --use_fast_math
+       -o ${CMAKE_CURRENT_BINARY_DIR}/${cuda_file})
+ 
++    if(CUDA_HOST_COMPILER)
++      set(cuda_flags ${cuda_flags} -ccbin ${CUDA_HOST_COMPILER})
++    endif()
++
+     if(${experimental})
+       set(cuda_flags ${cuda_flags} -D __KERNEL_EXPERIMENTAL__)
+       set(name ${name}_experimental)
+@@ -466,7 +471,6 @@
+         OUTPUT ${cuda_file}
+         COMMAND ${CUDA_NVCC_EXECUTABLE}
+             -arch=${arch}
+-            ${CUDA_NVCC_FLAGS}
+             --${format}
+             ${CMAKE_CURRENT_SOURCE_DIR}${cuda_kernel_src}
+             --ptxas-options="-v"
+@@ -513,12 +517,17 @@
+ 
+     set(output "${CMAKE_CURRENT_BINARY_DIR}/${input_we}.ptx")
+     set(cuda_flags
++      -I "${CUDA_INCLUDE_DIR}"
+       -I "${OPTIX_INCLUDE_DIR}"
+       -I "${CMAKE_CURRENT_SOURCE_DIR}/.."
+       -I "${CMAKE_CURRENT_SOURCE_DIR}/kernels/cuda"
+       --use_fast_math
+       -o ${output})
+ 
++    if(CUDA_HOST_COMPILER)
++      set(cuda_flags ${cuda_flags} -ccbin ${CUDA_HOST_COMPILER})
++    endif()
++
+     if(WITH_CYCLES_DEBUG)
+       set(cuda_flags ${cuda_flags}
+         -D __KERNEL_DEBUG__)

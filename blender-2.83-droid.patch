@@ -1,0 +1,27 @@
+diff -ru blender-2.83.0.old/source/blender/blenfont/intern/blf_font_default.c blender-2.83.0/source/blender/blenfont/intern/blf_font_default.c
+--- blender-2.83.0.old/source/blender/blenfont/intern/blf_font_default.c	2020-06-03 07:18:19.000000000 -0700
++++ blender-2.83.0/source/blender/blenfont/intern/blf_font_default.c	2020-06-08 18:51:22.642003171 -0700
+@@ -33,7 +33,7 @@
+ 
+ static int blf_load_font_default(const char *filename, const bool unique)
+ {
+-  const char *dir = BKE_appdir_folder_id(BLENDER_DATAFILES, "fonts");
++  const char *dir = "/usr/share/fonts/blender";
+   if (dir == NULL) {
+     fprintf(stderr,
+             "%s: 'fonts' data path not found for '%s', will not be able to display text\n",
+diff -ru blender-2.83.0.old/source/creator/CMakeLists.txt blender-2.83.0/source/creator/CMakeLists.txt
+--- blender-2.83.0.old/source/creator/CMakeLists.txt	2020-06-03 07:18:27.000000000 -0700
++++ blender-2.83.0/source/creator/CMakeLists.txt	2020-06-08 18:53:45.975733489 -0700
+@@ -387,9 +387,8 @@
+ 
+ # fonts
+ install(
+-  DIRECTORY
+-    ${CMAKE_SOURCE_DIR}/release/datafiles/fonts
+-  DESTINATION ${TARGETDIR_VER}/datafiles
++  DIRECTORY ${CMAKE_SOURCE_DIR}/release/datafiles/fonts/
++  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/fonts/blender
+ )
+ 
+ # localization

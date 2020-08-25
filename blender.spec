@@ -1,4 +1,7 @@
-%global blender_api 2.82
+# Force out of source build
+%undefine __cmake_in_source_build
+
+%global blender_api 2.83
 
 # Turn off the brp-python-bytecompile script
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
@@ -11,23 +14,24 @@
 %global cyclesflag OFF
 %endif
 
+%bcond_without  ffmpeg
+%bcond_with     openshading
+%bcond_with     embree
+
+# Only available on x86_64
 %ifarch x86_64
-
-# Each CUDA ptxas invocation can consume more than 4 gb of memory, so limit the
-# number of parallel make jobs to something suitable for your system when the
-# CUDA build is enabled.
-%global _with_cuda 1
 %global cuda_version 10.2
-
+%bcond_without  cuda
+%bcond_without  oidn
+%else
+%bcond_with     cuda
+%bcond_with     oidn
 %endif
-
-# Comment this to enable FFmpeg support.
-#global _without_ffmpeg 1
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}a
-Release:    3%{?dist}
+Version:    %{blender_api}.5
+Release:    4%{?dist}
 
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -36,54 +40,72 @@ URL:        http://www.blender.org
 Source0:    http://download.%{name}.org/source/%{name}-%{version}.tar.xz
 Source1:    %{name}.thumbnailer
 Source2:    %{name}-fonts.metainfo.xml
-Source5:    %{name}.xml
-Source10:   macros.%{name}
+Source3:    %{name}.xml
+Source4:    macros.%{name}
 
-Patch0:     %{name}-2.81a-droid.patch
-# Invalid upstream appdata causes segmentation fault
-# https://github.com/hughsie/appstream-glib/issues/337
-# https://developer.blender.org/D7149
-Patch1:     %{name}-2.82a-fix_appdata_validation.patch
+# Patch to separate built-in fonts to the fonts directory
+Patch0:     %{name}-%{blender_api}-droid.patch
 
-%{?_with_cuda:
-%if 0%{?fedora} >= 30
-BuildRequires:  cuda-gcc-c++
-%endif
-BuildRequires:  cuda-devel >= %{cuda_version}
-}
+# Upstream fix to support Python 3.9
+# https://developer.blender.org/rB56d0df51a36fdce7ec2d1fbb7b47b1d95b591b5f
+Patch1:     %{name}-support-python-3.9.diff
+
+# Define CUDA_HOST_COMPILER and CUDA_INCLUDE_DIR for all kernel targets, so
+# OptiX compilation is no different than normal kernels.
+Patch2:     %{name}-cuda.patch
 
 # Development stuff
 BuildRequires:  boost-devel
-BuildRequires:  cmake3
+BuildRequires:  cmake
+%if %{with cuda}
+BuildRequires:  cuda-devel >= %{cuda_version}
+BuildRequires:  cuda-gcc-c++
+BuildRequires:  nvidia-sdk-optix
+%endif
 BuildRequires:  desktop-file-utils
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  git
 BuildRequires:  libtool
 BuildRequires:  libspnav-devel
-#BuildRequires:  meson
+BuildRequires:  llvm-devel
 BuildRequires:  pkgconfig(blosc)
 BuildRequires:  pkgconfig(expat)
 BuildRequires:  pkgconfig(jemalloc)
 BuildRequires:  pkgconfig(libpcre)
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(openssl)
+%if 0%{?fedora} >= 32
+BuildRequires:  pkgconfig(pugixml)
+%else
+BuildRequires:  pugixml-devel
+%endif
 BuildRequires:  pkgconfig(python3) >= 3.5
 BuildRequires:  pkgconfig(xxf86vm)
-BuildRequires:  pugixml-devel
-BuildRequires:  python3-numpy
-BuildRequires:  python3-requests
+BuildRequires:  python3dist(numpy)
+BuildRequires:  python3dist(requests)
 BuildRequires:  subversion-devel
 
 # Compression stuff
-BuildRequires:  lzo-devel
 BuildRequires:  pkgconfig(liblzma)
+%if 0%{?fedora} >= 32
+BuildRequires:  pkgconfig(lzo2)
+%else
+BuildRequires:  lzo-devel
+%endif
 BuildRequires:  pkgconfig(zlib)
 
+
 # 3D modeling stuff
-%ifarch x86_64
-BuildRequires:  embree-devel
-BuildRequires:  oidn-devel
+%if %{with embree}
+BuildRequires:  cmake(embree)
+%endif
+BuildRequires:  opensubdiv-devel
+%if %{with openshading}
+BuildRequires:  cmake(OSL)
+%endif
+%if %{with oidn}
+BuildRequires:  cmake(OpenImageDenoise)
 %endif
 BuildRequires:  openCOLLADA-devel >= svn825
 BuildRequires:  pkgconfig(fftw3)
@@ -100,15 +122,14 @@ BuildRequires:  pkgconfig(glu)
 BuildRequires:  pkgconfig(xi)
 BuildRequires:  pkgconfig(xrender)
 BuildRequires:  pkgconfig(ode)
-BuildRequires:  opensubdiv-devel
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(xproto)
 
 # Picture/Video stuff
-BuildRequires:  alembic-devel
-%{!?_without_ffmpeg:
+BuildRequires:  cmake(Alembic)
+%if %{with ffmpeg}
 BuildRequires:  ffmpeg-devel
-}
+%endif
 BuildRequires:  openvdb-devel
 BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpng)
@@ -122,14 +143,14 @@ BuildRequires:  pkgconfig(libopenjp2)
 BuildRequires:  pkgconfig(tbb)
 
 # Audio stuff
+BuildRequires:  pkgconfig(ao)
 BuildRequires:  pkgconfig(freealut)
 BuildRequires:  pkgconfig(jack)
-BuildRequires:  pkgconfig(ao)
 BuildRequires:  pkgconfig(ogg)
+BuildRequires:  pkgconfig(opus)
 BuildRequires:  pkgconfig(samplerate)
 BuildRequires:  pkgconfig(sndfile)
 BuildRequires:  pkgconfig(vorbis)
-BuildRequires:  pkgconfig(opus)
 
 # Typography stuff
 BuildRequires:  fontpackages-devel
@@ -142,13 +163,17 @@ Requires:       google-droid-sans-fonts
 Requires:       hicolor-icon-theme
 Requires:       %{name}-fonts = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires:       fontpackages-filesystem
-Requires:       python3-numpy
-Requires:       python3-requests
+Requires:       python3dist(requests)
+Requires:       python3dist(numpy)
 Provides:       blender(ABI) = %{blender_api}
 
 # Obsolete the standalone Blender player retired by upstream
 Obsoletes:      blenderplayer < 1:2.80-1
 Provides:       blenderplayer = 1:2.80-1
+
+# Temporarily exclude s390x architecture due to build failure
+# https://koji.fedoraproject.org/koji/taskinfo?taskID=50141926
+ExcludeArch:  s390x
 
 %description
 Blender is the essential software solution you need for 3D, from modeling,
@@ -176,7 +201,7 @@ Provides:       fonts-%{name} = %{?epoch:%{epoch}:}%{version}-%{release}
 This package contains an international Blender mono space font which is a
 composition of several mono space fonts to cover several character sets.
 
-%{?_with_cuda:
+%if %{with cuda}
 %package cuda
 Summary:       CUDA support for Blender
 Requires:      %{name} = %{?epoch:%{epoch}:}%{version}-%{release}
@@ -187,7 +212,7 @@ Requires:      cuda-nvrtc
 %description cuda
 This package contains CUDA support for Blender, to enable rendering on supported
 Nvidia GPUs.
-}
+%endif
 
 %prep
 %autosetup -p1
@@ -197,75 +222,92 @@ Nvidia GPUs.
 # proof)
 rm -f build_files/cmake/Modules/FindOpenJPEG.cmake
 
-%{?_with_cuda:
+%if %{with cuda}
 sed -i \
     -e 's|libcuda.so|libcuda.so.1|g' \
     -e 's|libnvrtc.so|libnvrtc.so.%{cuda_version}|g' \
     extern/cuew/src/cuew.c
-
-sed -i -e \
-%if 0%{?fedora} >= 30
-    's|${CUDA_NVCC_FLAGS}|-I/usr/include/cuda -ccbin /usr/bin/cuda-g++|g' \
-%else
-    's|${CUDA_NVCC_FLAGS}|-I/usr/include/cuda|g' \
 %endif
-    intern/cycles/kernel/CMakeLists.txt
-
-}
 
 # Fix all Python shebangs recursively in .
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
 
-mkdir cmake-make
+
+# Use c++14 in order to fix build errors when including headers
+# from the latest version of openvdb.
+# Upstream issue: https://github.com/AcademySoftwareFoundation/openvdb/issues/795
+sed -i 's|${CMAKE_CXX_FLAGS} -std=c++11|${CMAKE_CXX_FLAGS} -std=c++14|' CMakeLists.txt
 
 %build
-pushd cmake-make
-
-%cmake .. \
+%cmake . \
 %ifnarch %{ix86} x86_64
     -DWITH_RAYOPTIMIZATION=OFF \
 %endif
+%if %{with ffmpeg}
+    -DWITH_CODEC_FFMPEG=ON \
+%else
+    -DWITH_CODEC_FFMPEG=OFF \
+%endif
+%if %{with embree}
+    -D_embree_LIBRARIES=%{_libdir} \
+    -DWITH_CYCLES_EMBREE=%{cyclesflag} \
+%endif
+%if %{with openshading}
+    -DOSL_COMPILER=g++ \
+%endif
+%if %{with oidn}
+    -DOPENIMAGEDENOISE_LIBRARY=%{_libdir} \
+    -DOPENIMAGEDENOISE_INCLUDE_DIR=%{_includedir} \
+    -DWITH_OPENIMAGEDENOISE=ON \
+%endif
+%if %{with cuda}
+%if 0%{?fedora}
+    -DCUDA_HOST_COMPILER=/usr/bin/cuda-g++ \
+%endif
+    -DCUDA_INCLUDE_DIR=%{_includedir}/cuda \
+    -DCYCLES_CUDA_BINARIES_ARCH="sm_30;sm_35;sm_37;sm_50;sm_52;sm_60;sm_61;sm_70;sm_75" \
+    -DOPTIX_INCLUDE_DIR=%{_includedir}/optix \
+    -DWITH_CYCLES_CUDA_BINARIES=ON \
+    -DWITH_CYCLES_CUDA_BUILD_SERIAL=ON \
+    -DWITH_CYCLES_DEVICE_OPTIX=ON \
+%endif
     -DBOOST_ROOT=%{_prefix} \
     -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_FLAGS="%{optflags} -Wl,--as-needed" \
+    -DCMAKE_CXX_FLAGS="%{optflags} -Wl,--as-needed" \
     -DCMAKE_SKIP_RPATH=ON \
-    -DPYTHON_VERSION=%{python3_version} \
     -DOpenGL_GL_PREFERENCE=GLVND \
-    %{?_without_ffmpeg:-DWITH_CODEC_FFMPEG=OFF} \
+    -DPYTHON_VERSION=%{python3_version} \
+    -DWITH_ALEMBIC=ON \
     -DWITH_CYCLES=%{cyclesflag} \
     -DWITH_DOC_MANPAGE=ON \
     -DWITH_INSTALL_PORTABLE=OFF \
+    -DWITH_OPENSUBDIV=ON \
+    -DWITH_OPENVDB=ON \
+    -DWITH_OPENVDB_BLOSC=ON \
+    -DWITH_PYTHON=ON \
     -DWITH_PYTHON_INSTALL=OFF \
     -DWITH_PYTHON_INSTALL_REQUESTS=OFF \
-    -DWITH_PYTHON_SAFETY=ON \
-%if 0%{?_with_cuda}
-    -DCUDA_NVCC_EXECUTABLE=%{_bindir}/nvcc \
-    -DCYCLES_CUDA_BINARIES_ARCH="sm_30;sm_35;sm_37;sm_50;sm_52;sm_60;sm_61;sm_70;sm_75" \
-    -DWITH_CYCLES_CUDA_BINARIES=ON \
-    -DWITH_CYCLES_CUDA_BUILD_SERIAL=ON
-%endif
+    -DWITH_PYTHON_SAFETY=ON
 
-%make_build
-popd
-
+%cmake_build
 
 %install
-pushd cmake-make
-%make_install
-popd
-
+%cmake_install
 
 # Thumbnailer
 install -p -D -m 644 %{SOURCE1} %{buildroot}%{_datadir}/thumbnailers/%{name}.thumbnailer
 
 # Mime support
-install -p -D -m 644 %{SOURCE5} %{buildroot}%{_datadir}/mime/packages/%{name}.xml
+install -p -D -m 644 %{SOURCE3} %{buildroot}%{_datadir}/mime/packages/%{name}.xml
 
 # Deal with docs in the files section
 rm -rf %{buildroot}%{_docdir}/%{name}/*
 
 # rpm macros
 mkdir -p %{buildroot}%{macrosdir}
-sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE10} > %{buildroot}%{macrosdir}/macros.%{name}
+sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE4} > %{buildroot}%{macrosdir}/macros.%{name}
 
 # AppData
 install -p -m 644 -D release/freedesktop/org.%{name}.Blender.appdata.xml \
@@ -274,9 +316,6 @@ install -p -m 644 -D %{SOURCE2} %{buildroot}%{_metainfodir}/%{name}-fonts.metain
 
 # Localization
 %find_lang %{name}
-
-# Avoid having locales listed twice
-rm -fr %{buildroot}%{_datadir}/%{blender_api}/locale/languages
 
 # rpmlint fixes
 find %{buildroot}%{_datadir}/%{name}/%{blender_api}/scripts -name "*.py" -exec chmod 755 {} \;
@@ -296,6 +335,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}-fonts.
 %{_bindir}/%{name}-thumbnailer.py
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/%{name}/
+# Pulled in by the localization, avoid listing twice
+%exclude %{_datadir}/%{name}/%{blender_api}/datafiles/locale
+# In the CUDA subpackage
 %exclude %{_datadir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.cubin
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
 %{_datadir}/mime/packages/%{name}.xml
@@ -311,14 +353,86 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}-fonts.
 %{_fontbasedir}/%{name}/
 %{_metainfodir}/%{name}-fonts.metainfo.xml
 
-%{?_with_cuda:
+%if %{with cuda}
 %files cuda
 %{_datadir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.cubin
-}
+%endif
 
 %changelog
-* Sat Apr 04 2020 Simone Caronni <negativo17@gmail.com> - 2:2.82a-3
-- Rebase on Fedora's master branch.
+* Mon Aug 24 2020 Simone Caronni <negativo17@gmail.com> - 2:2.83.5-5
+- Merge changes from Fedora.
+- Enable CUDA & OptiX.
+
+* Tue Aug 25 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.5-4
+- Temporarily exclude s390x second architecutre
+
+* Tue Aug 25 2020 Charalampos Stratakis <cstratak@redhat.com> - 1:2.83.5-3
+- Use c++14 for properly building with the latest version of openvdb
+
+* Mon Aug 24 2020 Simone Caronni <negativo17@gmail.com> - 1:2.83.5-2
+- Be consistent with build options format and distribution conditionals.
+- rpmlint fixes.
+- Fix build dependencies.
+- Fix Python 3.9 patch.
+- Disable OpenShadingLanguage, 1.11 is not supported.
+- Disable Embree, 3.11 is not supported.
+
+* Wed Aug 19 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.5-1
+- Update to 2.83.5 (#1855165)
+
+* Wed Aug 05 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.4-1
+- Update to 2.83.4 (#1855165)
+
+* Sat Aug 01 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.3-4
+- Use cmake macros for build and install
+
+* Sat Aug 01 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.83.3-3
+- Second attempt - Rebuilt for
+  https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Mon Jul 27 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.83.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Wed Jul 22 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.3-1
+- Update to 2.83.3 (#1855165)
+- Enable embree and osl for cycles rendering
+
+* Thu Jul 09 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.2-2
+- Add openshadinglanguage dependency
+- Reenable upstream patch to build on Python 3.9 for Fedora 33+ (#1843100)
+
+* Thu Jul 09 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.2-1
+- Update to 2.83.2 (#1855165)
+
+* Thu Jun 25 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.1-1
+- Update to 2.83.1 (#1843623)
+
+* Sun Jun 21 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.0-4
+- Apply upstream patch to build on Python 3.9 (#1843100)
+
+* Sun Jun 21 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.0-3
+- Fix installtion path for fonts directory (#1849429)
+- More conversion to pkgconf format
+
+* Sat Jun 20 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.0-2
+- Remove undocumented and undefined function on Python 3.9
+- Use documented python function defined on Python 3.9 (#1843100)
+
+* Sun Jun 14 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.0-1.1
+- Temporarily exclude ARM architecture (#1843100)
+
+* Wed Jun 03 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.83.0-1
+- Update to 2.83.0 (#1843623)
+- Clean up spec file
+
+* Tue May 12 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.82a-5
+- Rebuild for embree 3.10.0
+
+* Mon May 11 2020 Gwyn Ciesla <gwync@protonmail.com> - 1:2.82a-4
+- Rebuild for new LibRaw
+
+* Sat Apr 11 2020 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.82a-3
+- Rebuild for oidn 1.2.0
 
 * Sat Apr 04 2020 Simone Caronni <negativo17@gmail.com> - 1:2.82a-2
 - Remove unfinished RHEL 7 support in SPEC file.
@@ -352,7 +466,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}-fonts.
 - Use pkgconfig for many build requirements as possible
 - Replace pkgconfig(freeglut) by pkgconfig(glut) for Fedora 32 and above
 - Enable OpenImageDenoise support (rhbz #1794521)
- 
+
 * Sat Dec 14 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.81a-3
 - Rebuild for openvdb 7.0.0
 
@@ -368,7 +482,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}-fonts.
 * Thu Nov 21 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.81-1
 - Update to 2.81
 - Drop upstream patch
-- Enable oidn support for x86_64 architecture 
+- Enable oidn support for x86_64 architecture
 - Patch on appdata fixing tags
 
 * Sun Nov 03 2019 Luya Tshimbalanga <luya@fedoraproject.org> - 1:2.80-13
