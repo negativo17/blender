@@ -8,7 +8,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    2.90.0
+Version:    2.90.1
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -135,6 +135,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Tue Oct 06 2020 Simone Caronni <negativo17@gmail.com> - 2:2.90.1-1
+- Update to 2.90.1.
+
 * Sat Sep 05 2020 Simone Caronni <negativo17@gmail.com> - 2:2.90.0-1
 - Switch to release binaries as the depending libraries in Fedora are all at the
   wrong versions.
