@@ -1,4 +1,4 @@
-%global blender_api 2.91
+%global blender_api 2.92
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -8,7 +8,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    2.91.2
+Version:    2.92.0
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -135,6 +135,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Wed Mar 10 2021 Simone Caronni <negativo17@gmail.com> - 2:2.92.0-1
+- Update to 2.92.0.
+
 * Wed Jan 27 2021 Simone Caronni <negativo17@gmail.com> - 2:2.91.2-1
 - Update to 2.91.2.
 
