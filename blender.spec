@@ -1,4 +1,4 @@
-%global blender_api 2.92
+%global blender_api 2.93
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -6,9 +6,11 @@
 
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
+%global tarball %{name}-%{version}-stable+blender-v293-release.84da05a8b806-linux.%{_arch}-release
+
 Name:       blender
 Epoch:      2
-Version:    2.92.0
+Version:    %{blender_api}.0
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -16,7 +18,7 @@ URL:        http://www.blender.org
 
 ExclusiveArch:  x86_64
 
-Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{version}-linux64.tar.xz
+Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{version}-linux-x64.tar.xz
 Source1:    %{name}.thumbnailer
 Source2:    https://dev-files.blender.org/file/download/4cs5nxemrhljbcursap3/PHID-FILE-d443oos4xbdqulniitve/org.blender.Blender.appdata.xml
 Source3:    %{name}.xml
@@ -67,7 +69,7 @@ This package contains CUDA support for Blender, to enable rendering on supported
 Nvidia GPUs.
 
 %prep
-%autosetup -p1 -n %{name}-%{version}-linux64
+%autosetup -p1 -n %{tarball}
 
 # Fix all Python shebangs recursively in .
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
@@ -81,7 +83,7 @@ ln -sf ../%{_lib}/%{name}/%{name} %{buildroot}%{_bindir}/%{name}
 
 # Desktop file
 install -p -D -m 644 %{name}.desktop %{buildroot}%{_datadir}/applications/%{name}.desktop
-install -p -D -m 644 %{name}.desktop %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
+install -p -D -m 644 %{name}.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 
 # Thumbnailer
 install -p -D -m 755 %{name}-thumbnailer.py %{buildroot}%{_bindir}/%{name}-thumbnailer.py
@@ -135,6 +137,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Jun 03 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.0-1
+- Update to 2.93.0.
+- Fix icon.
+
 * Wed Mar 10 2021 Simone Caronni <negativo17@gmail.com> - 2:2.92.0-1
 - Update to 2.92.0.
 
