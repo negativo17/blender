@@ -6,11 +6,9 @@
 
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
-%global tarball %{name}-%{version}-stable+blender-v293-release.84da05a8b806-linux.%{_arch}-release
-
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}.0
+Version:    %{blender_api}.1
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -69,7 +67,7 @@ This package contains CUDA support for Blender, to enable rendering on supported
 Nvidia GPUs.
 
 %prep
-%autosetup -p1 -n %{tarball}
+%autosetup -p1 -n %{name}-%{version}-linux-x64
 
 # Fix all Python shebangs recursively in .
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
@@ -137,6 +135,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Tue Jul 20 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.1-1
+- Update to 2.93.1.
+
 * Thu Jun 03 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.0-1
 - Update to 2.93.0.
 - Fix icon.
