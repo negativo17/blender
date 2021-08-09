@@ -8,7 +8,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}.1
+Version:    %{blender_api}.2
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -18,7 +18,9 @@ ExclusiveArch:  x86_64
 
 Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{version}-linux-x64.tar.xz
 Source1:    %{name}.thumbnailer
-Source2:    https://dev-files.blender.org/file/download/4cs5nxemrhljbcursap3/PHID-FILE-d443oos4xbdqulniitve/org.blender.Blender.appdata.xml
+# URL can be derived by selecting the proper tag at:
+# https://developer.blender.org/diffusion/B/browse/master/release/freedesktop/org.blender.Blender.appdata.xml
+Source2:    https://dev-files.blender.org/file/download/meety4gim6x2j2qwqd73/PHID-FILE-oa4mwxnb5im5kc2ggvwe/org.blender.Blender.appdata.xml
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
@@ -135,6 +137,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Mon Aug 09 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.2-1
+- Update to 2.93.2.
+
 * Tue Jul 20 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.1-1
 - Update to 2.93.1.
 
