@@ -1,3 +1,6 @@
+%global debug_package %{nil}
+%global __strip /bin/true
+
 %global blender_api 2.93
 %global org org.blender.Blender
 
@@ -9,7 +12,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}.4
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -137,6 +140,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Wed Sep 22 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.4-2
+- Do not attempt to strip binaries.
+
 * Wed Sep 01 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.4-1
 - Update to 2.93.4.
 
