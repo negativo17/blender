@@ -11,7 +11,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    2.93.5
+Version:    2.93.6
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -140,6 +140,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Nov 18 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.6-1
+- Update to 2.93.6.
+
 * Mon Nov 08 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.5-1
 - Update to 2.93.5.
 
