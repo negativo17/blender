@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 2.93
+%global blender_api 3.0
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -11,7 +11,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    2.93.6
+Version:    3.0.0
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -23,7 +23,7 @@ Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{
 Source1:    %{name}.thumbnailer
 # URL can be derived by selecting the proper tag at:
 # https://developer.blender.org/diffusion/B/browse/master/release/freedesktop/org.blender.Blender.appdata.xml
-Source2:    https://dev-files.blender.org/file/download/yurvd6y5pgqwsxmd22wo/PHID-FILE-lw2kfsgpnvpquiifdipo/org.blender.Blender.appdata.xml
+Source2:    https://dev-files.blender.org/file/download/6drhb7hg36ml5wibr5pf/PHID-FILE-4vmrrdxaurrpwssf6z2s/org.blender.Blender.appdata.xml
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
@@ -89,7 +89,7 @@ install -p -D -m 644 %{name}.desktop %{buildroot}%{_datadir}/applications/%{name
 install -p -D -m 644 %{name}.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 
 # Thumbnailer
-install -p -D -m 755 %{name}-thumbnailer.py %{buildroot}%{_bindir}/%{name}-thumbnailer.py
+install -p -D -m 755 %{name}-thumbnailer %{buildroot}%{_bindir}/%{name}-thumbnailer
 install -p -D -m 644 %{SOURCE1} %{buildroot}%{_datadir}/thumbnailers/%{name}.thumbnailer
 
 # Mime support
@@ -119,7 +119,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %license *.txt
 %doc readme.html
 %{_bindir}/%{name}
-%{_bindir}/%{name}-thumbnailer.py
+%{_bindir}/%{name}-thumbnailer
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 %{_datadir}/mime/packages/%{name}.xml
@@ -140,6 +140,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Sat Jan 22 2022 Simone Caronni <negativo17@gmail.com> - 2:3.0.0-1
+- Update to 3.0.0.
+
 * Thu Nov 18 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.6-1
 - Update to 2.93.6.
 

@@ -1,4 +1,4 @@
 [Thumbnailer Entry]
-TryExec=blender-thumbnailer.py
-Exec=blender-thumbnailer.py %i %o
+TryExec=blender-thumbnailer
+Exec=blender-thumbnailer %i %o
 MimeType=application/x-blender;
