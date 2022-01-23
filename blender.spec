@@ -77,7 +77,7 @@ Nvidia GPUs.
 # Fix all Python shebangs recursively in .
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
 
-%if 0%{?rhel} == 7
+%if 0%{?rhel} == 7 || 0%{?rhel} == 8
 sed -i -e '/PrefersNonDefaultGPU/d' %{name}.desktop
 %endif
 
