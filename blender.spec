@@ -12,7 +12,7 @@
 Name:       blender
 Epoch:      2
 Version:    3.0.0
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -77,6 +77,10 @@ Nvidia GPUs.
 # Fix all Python shebangs recursively in .
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
 
+%if 0%{?rhel} == 7
+sed -i -e '/PrefersNonDefaultGPU/d' %{name}.desktop
+%endif
+
 %install
 # Main program
 mkdir -p %{buildroot}%{_libdir}/%{name}
@@ -100,7 +104,9 @@ mkdir -p %{buildroot}%{macrosdir}
 sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE4} > %{buildroot}%{macrosdir}/macros.%{name}
 
 # AppData
+%if 0%{?fedora} || 0%{?rhel} >= 8
 install -p -m 644 -D %{SOURCE2} %{buildroot}%{_metainfodir}/%{org}.appdata.xml
+%endif
 
 # Localization
 %find_lang %{name}
@@ -129,8 +135,6 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %{_metainfodir}/%{org}.appdata.xml
-%else
-%exclude %{_metainfodir}
 %endif
 
 %files cuda
@@ -140,6 +144,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Sun Jan 23 2022 Simone Caronni <negativo17@gmail.com> - 2:3.0.0-2
+- Fix build on RHEL/CentOS 7.
+
 * Sat Jan 22 2022 Simone Caronni <negativo17@gmail.com> - 2:3.0.0-1
 - Update to 3.0.0.
 
