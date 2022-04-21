@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 3.0
+%global blender_api 3.1
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -11,8 +11,8 @@
 
 Name:       blender
 Epoch:      2
-Version:    3.0.0
-Release:    2%{?dist}
+Version:    3.1.2
+Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -22,8 +22,8 @@ ExclusiveArch:  x86_64
 Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{version}-linux-x64.tar.xz
 Source1:    %{name}.thumbnailer
 # URL can be derived by selecting the proper tag at:
-# https://developer.blender.org/diffusion/B/browse/master/release/freedesktop/org.blender.Blender.appdata.xml
-Source2:    https://dev-files.blender.org/file/download/6drhb7hg36ml5wibr5pf/PHID-FILE-4vmrrdxaurrpwssf6z2s/org.blender.Blender.appdata.xml
+# https://developer.blender.org/diffusion/B/browse/master/release/freedesktop/org.blender.Blender.appdata.xml;v%{version}
+Source2:    https://dev-files.blender.org/file/download/j7qlxm4enqeh5ejiltah/PHID-FILE-7s6ndlqf5gsfkz3v7fe4/org.blender.Blender.appdata.xml
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
@@ -144,6 +144,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Apr 21 2022 Simone Caronni <negativo17@gmail.com> - 2:3.1.2-1
+- Update to 3.1.2.
+
 * Sun Jan 23 2022 Simone Caronni <negativo17@gmail.com> - 2:3.0.0-2
 - Fix build on RHEL/CentOS 7.
 
