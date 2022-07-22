@@ -11,7 +11,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    3.2.0
+Version:    3.2.1
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -23,7 +23,7 @@ Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{
 Source1:    %{name}.thumbnailer
 # URL can be derived by selecting the proper tag at:
 # https://developer.blender.org/diffusion/B/history/master/release/freedesktop/org.blender.Blender.appdata.xml;v%{version}
-Source2:    https://dev-files.blender.org/file/download/g2usadmodbmlguy2bs2m/PHID-FILE-7pxwk3kd5ywphfxwd7mg/org.blender.Blender.appdata.xml
+Source2:    https://dev-files.blender.org/file/download/6j5szczupsbbhnxs7sqt/PHID-FILE-gzlybwii7x4ojmnba45l/org.blender.Blender.appdata.xml
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
@@ -144,6 +144,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Fri Jul 22 2022 Simone Caronni <negativo17@gmail.com> - 2:3.2.1-1
+- Update to 3.2.1.
+
 * Thu Jun 16 2022 Simone Caronni <negativo17@gmail.com> - 2:3.2.0-1
 - Update to 3.2.0.
 
