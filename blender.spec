@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 3.2
+%global blender_api 3.3
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -11,7 +11,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    3.2.1
+Version:    3.3.0
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -23,7 +23,7 @@ Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{
 Source1:    %{name}.thumbnailer
 # URL can be derived by selecting the proper tag at:
 # https://developer.blender.org/diffusion/B/history/master/release/freedesktop/org.blender.Blender.appdata.xml;v%{version}
-Source2:    https://dev-files.blender.org/file/download/6j5szczupsbbhnxs7sqt/PHID-FILE-gzlybwii7x4ojmnba45l/org.blender.Blender.appdata.xml
+Source2:    https://dev-files.blender.org/file/download/f6exmlw5dktdwuyuoe5x/PHID-FILE-2fxtmx5lq7pf2pvnvvv2/org.blender.Blender.appdata.xml
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
@@ -132,18 +132,23 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{_datadir}/thumbnailers/%{name}.thumbnailer
 %{_libdir}/%{name}/
 # In the CUDA subpackage
-%exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib
+%exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.cubin
+%exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.ptx
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %{_metainfodir}/%{org}.appdata.xml
 %endif
 
 %files cuda
-%{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib
+%{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.cubin
+%{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.ptx
 
 %files rpm-macros
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Wed Sep 21 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.0-1
+- Update to 3.3.0.
+
 * Fri Jul 22 2022 Simone Caronni <negativo17@gmail.com> - 2:3.2.1-1
 - Update to 3.2.1.
 
