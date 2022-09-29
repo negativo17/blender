@@ -9,10 +9,13 @@
 
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
+%global __requires_exclude ^(libsycl\\.so.*)$
+%global __provides_exclude ^(libsycl\\.so.*)$
+
 Name:       blender
 Epoch:      2
 Version:    3.3.0
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -146,6 +149,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Sep 29 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.0-2
+- Filter out SYCL library.
+
 * Wed Sep 21 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.0-1
 - Update to 3.3.0.
 
