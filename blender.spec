@@ -14,8 +14,8 @@
 
 Name:       blender
 Epoch:      2
-Version:    3.3.0
-Release:    3%{?dist}
+Version:    3.3.1
+Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -149,6 +149,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Wed Oct 12 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.1-1
+- Update to 3.3.1.
+
 * Fri Sep 30 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.0-3
 - Make private libraries visible.
 - Trim changelog.
