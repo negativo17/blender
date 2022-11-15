@@ -9,13 +9,13 @@
 
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
-%global __requires_exclude ^(libsycl\\.so.*)$
-%global __provides_exclude ^(libsycl\\.so.*)$
+%global __requires_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*)$
+%global __provides_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*)$
 
 Name:       blender
 Epoch:      2
 Version:    3.3.1
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -149,6 +149,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Tue Nov 15 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.1-2
+- Filter out Ncurses 5 libraries.
+
 * Wed Oct 12 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.1-1
 - Update to 3.3.1.
 
