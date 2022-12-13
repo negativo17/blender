@@ -26,7 +26,7 @@ Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{
 Source1:    %{name}.thumbnailer
 # URL can be derived by selecting the proper tag at:
 # https://developer.blender.org/diffusion/B/history/master/release/freedesktop/org.blender.Blender.appdata.xml;v%%{version}
-Source2:    https://dev-files.blender.org/file/download/f6exmlw5dktdwuyuoe5x/PHID-FILE-2fxtmx5lq7pf2pvnvvv2/org.blender.Blender.appdata.xml
+Source2:    https://dev-files.blender.org/file/download/5e7nnkss4i5pqdrmphuz/PHID-FILE-vtrgwhu2dejtuhtb6ahu/org.blender.Blender.appdata.xml
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
