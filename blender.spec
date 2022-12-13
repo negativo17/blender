@@ -1,5 +1,6 @@
 %global debug_package %{nil}
 %global __strip /bin/true
+%global __brp_check_rpaths %{nil}
 
 %global blender_api 3.4
 %global org org.blender.Blender
