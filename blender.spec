@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 3.3
+%global blender_api 3.4
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -14,8 +14,8 @@
 
 Name:       blender
 Epoch:      2
-Version:    3.3.1
-Release:    2%{?dist}
+Version:    %{blender_api}.0
+Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -149,6 +149,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Tue Dec 13 2022 Simone Caronni <negativo17@gmail.com> - 2:3.4.0-1
+- Update to 3.4.0.
+
 * Tue Nov 15 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.1-2
 - Filter out Ncurses 5 libraries.
 
