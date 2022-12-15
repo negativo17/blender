@@ -1,6 +1,5 @@
 %global debug_package %{nil}
 %global __strip /bin/true
-%global __brp_check_rpaths %{nil}
 
 %global blender_api 3.4
 %global org org.blender.Blender
@@ -16,7 +15,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}.0
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -31,6 +30,7 @@ Source2:    https://dev-files.blender.org/file/download/5e7nnkss4i5pqdrmphuz/PHI
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
+BuildRequires:  chrpath
 BuildRequires:  desktop-file-utils
 %if 0%{?fedora} || 0%{?rhel} >= 8
 BuildRequires:  libappstream-glib
@@ -88,7 +88,10 @@ sed -i -e '/PrefersNonDefaultGPU/d' %{name}.desktop
 %install
 # Main program
 mkdir -p %{buildroot}%{_libdir}/%{name}
-cp -fra %{blender_api} %{name} blender-symbolic.svg %{buildroot}%{_libdir}/%{name}
+cp -fra %{blender_api} %{name} lib \
+    blender-symbolic.svg \
+    %{buildroot}%{_libdir}/%{name}
+rm -fr %{buildroot}%{_libdir}/%{name}/lib/mesa
 mkdir -p %{buildroot}%{_bindir}
 ln -sf ../%{_lib}/%{name}/%{name} %{buildroot}%{_bindir}/%{name}
 
@@ -119,6 +122,8 @@ install -p -m 644 -D %{SOURCE2} %{buildroot}%{_metainfodir}/%{org}.appdata.xml
 find %{buildroot} -name ".so" -exec chmod 755 {} \;
 find %{buildroot} -name ".so.*" -exec chmod 755 {} \;
 
+chrpath -d %{buildroot}%{_libdir}/%{name}/%{blender_api}/python/lib/python3.10/site-packages/libextern_draco.so
+
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %if 0%{?fedora} || 0%{?rhel} >= 8
@@ -126,7 +131,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %endif
 
 %files -f %{name}.lang
-%license *.txt
+%license *.txt license
 %doc readme.html
 %{_bindir}/%{name}
 %{_bindir}/%{name}-thumbnailer
@@ -150,6 +155,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Dec 15 2022 Simone Caronni <negativo17@gmail.com> - 2:3.4.0-2
+- Fix libraries.
+
 * Tue Dec 13 2022 Simone Caronni <negativo17@gmail.com> - 2:3.4.0-1
 - Update to 3.4.0.
 
