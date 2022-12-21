@@ -14,8 +14,8 @@
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}.0
-Release:    2%{?dist}
+Version:    %{blender_api}.1
+Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -26,7 +26,7 @@ Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{
 Source1:    %{name}.thumbnailer
 # URL can be derived by selecting the proper tag at:
 # https://developer.blender.org/diffusion/B/history/master/release/freedesktop/org.blender.Blender.appdata.xml;v%%{version}
-Source2:    https://dev-files.blender.org/file/download/5e7nnkss4i5pqdrmphuz/PHID-FILE-vtrgwhu2dejtuhtb6ahu/org.blender.Blender.appdata.xml
+Source2:    https://dev-files.blender.org/file/download/u3pxafi4bhcwgmzv7jso/PHID-FILE-yjjoay6vso3jimx2z3z4/org.blender.Blender.appdata.xml
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
@@ -155,6 +155,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Wed Dec 21 2022 Simone Caronni <negativo17@gmail.com> - 2:3.4.1-1
+- Update to 3.4.1.
+
 * Thu Dec 15 2022 Simone Caronni <negativo17@gmail.com> - 2:3.4.0-2
 - Fix libraries.
 
