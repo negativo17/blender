@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 3.4
+%global blender_api 3.5
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -14,8 +14,8 @@
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}.1
-Release:    2%{?dist}
+Version:    %{blender_api}.0
+Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -24,9 +24,7 @@ ExclusiveArch:  x86_64
 
 Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{version}-linux-x64.tar.xz
 Source1:    %{name}.thumbnailer
-# URL can be derived by selecting the proper tag at:
-# https://developer.blender.org/diffusion/B/history/master/release/freedesktop/org.blender.Blender.appdata.xml;v%%{version}
-Source2:    https://dev-files.blender.org/file/download/u3pxafi4bhcwgmzv7jso/PHID-FILE-yjjoay6vso3jimx2z3z4/org.blender.Blender.appdata.xml
+Source2:    https://raw.githubusercontent.com/blender/blender/v%{version}/release/freedesktop/org.blender.Blender.appdata.xml
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
@@ -155,6 +153,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Apr 13 2023 Simone Caronni <negativo17@gmail.com> - 2:3.5.0-1
+- Update to 3.5.0.
+
 * Tue Jan 10 2023 Lars R. Damerow <lars@pixar.com> - 2:3.4.1-2
 - Filter out automatic Provides/Requires for libcycles_kernel_oneapi_aot library.
 
