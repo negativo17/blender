@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 3.5
+%global blender_api 3.6
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -153,6 +153,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Jul 20 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.1-1
+- Update to 3.6.1.
+
 * Fri May 05 2023 Simone Caronni <negativo17@gmail.com> - 2:3.5.1-1
 - Update to 3.5.1.
 
