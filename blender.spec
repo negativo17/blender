@@ -14,7 +14,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}.3
+Version:    %{blender_api}.4
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -77,7 +77,7 @@ Nvidia GPUs.
 %autosetup -p1 -n %{name}-%{version}-linux-x64
 
 # Fix all Python shebangs recursively in .
-pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
+%{__python3} %{_rpmconfigdir}/redhat/pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
 
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
 sed -i -e '/PrefersNonDefaultGPU/d' %{name}.desktop
@@ -153,6 +153,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Fri Oct 06 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.4-1
+- Update to 3.6.4.
+
 * Wed Sep 27 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.3-1
 - Update to 3.6.3.
 
