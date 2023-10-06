@@ -77,7 +77,11 @@ Nvidia GPUs.
 %autosetup -p1 -n %{name}-%{version}-linux-x64
 
 # Fix all Python shebangs recursively in .
+%if 0%{?fedora}
 %{__python3} %{_rpmconfigdir}/redhat/pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
+%else
+pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
+%endif
 
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
 sed -i -e '/PrefersNonDefaultGPU/d' %{name}.desktop
