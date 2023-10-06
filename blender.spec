@@ -9,13 +9,14 @@
 
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
-%global __requires_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*)$
-%global __provides_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*)$
+# Bundled libraries:
+%global __requires_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libusd.*\\.so.*)$
+%global __provides_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libusd.*\\.so.*)$
 
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}.4
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -157,6 +158,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Fri Oct 06 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.4-2
+- Filter out provided libraries.
+
 * Fri Oct 06 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.4-1
 - Update to 3.6.4.
 
