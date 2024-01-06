@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 3.6
+%global blender_api 4.0
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -10,13 +10,13 @@
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
 # Bundled libraries:
-%global __requires_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libusd.*\\.so.*)$
-%global __provides_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libusd.*\\.so.*)$
+%global __requires_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libusd.*\\.so.*)$
+%global __provides_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libusd.*\\.so.*)$
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}.4
-Release:    2%{?dist}
+Version:    %{blender_api}.2
+Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -25,7 +25,7 @@ ExclusiveArch:  x86_64
 
 Source0:    http://download.%{name}.org/release/Blender%{blender_api}/%{name}-%{version}-linux-x64.tar.xz
 Source1:    %{name}.thumbnailer
-Source2:    https://raw.githubusercontent.com/blender/blender/v%{version}/release/freedesktop/org.blender.Blender.appdata.xml
+Source2:    https://raw.githubusercontent.com/blender/blender/v%{version}/release/freedesktop/org.blender.Blender.metainfo.xml
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
@@ -158,6 +158,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Sat Jan 06 2024 Simone Caronni <negativo17@gmail.com> - 2:4.0.2-1
+- Update to 4.0.2.
+
 * Fri Oct 06 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.4-2
 - Filter out provided libraries.
 
