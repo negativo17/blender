@@ -115,7 +115,16 @@ sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE4} > %{buildroot}%{macrosdir}/macr
 
 # AppData
 %if 0%{?fedora} || 0%{?rhel} >= 8
-install -p -m 644 -D %{SOURCE2} %{buildroot}%{_metainfodir}/%{org}.appdata.xml
+install -p -m 644 -D %{SOURCE2} %{buildroot}%{_metainfodir}/%{org}.metainfo.xml
+%endif
+%if 0%{?rhel} >= 8
+sed -i \
+  -e '/type="faq"/d' \
+  -e '/type="vcs-browser"/d' \
+  -e '/type="translate"/d' \
+  -e '/type="vcs-browser"/d' \
+  -e '/type="contribute"/d' \
+  %{buildroot}%{_metainfodir}/%{org}.metainfo.xml
 %endif
 
 # Localization
@@ -130,7 +139,7 @@ chrpath -d %{buildroot}%{_libdir}/%{name}/%{blender_api}/python/lib/python3.10/s
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %if 0%{?fedora} || 0%{?rhel} >= 8
-appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata.xml
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainfo.xml
 %endif
 
 %files -f %{name}.lang
@@ -147,7 +156,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.appdata
 %exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.cubin
 %exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.ptx
 %if 0%{?fedora} || 0%{?rhel} >= 8
-%{_metainfodir}/%{org}.appdata.xml
+%{_metainfodir}/%{org}.metainfo.xml
 %endif
 
 %files cuda
