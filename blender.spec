@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 4.0
+%global blender_api 4.1
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -10,12 +10,12 @@
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
 # Bundled libraries:
-%global __requires_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libusd.*\\.so.*)$
-%global __provides_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libusd.*\\.so.*)$
+%global __requires_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libvulkan\\.so.*|libusd.*\\.so.*)$
+%global __provides_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libvulkan\\.so.*|libusd.*\\.so.*)$
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}.2
+Version:    %{blender_api}.0
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -84,6 +84,9 @@ Nvidia GPUs.
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
 %endif
 
+# Fix all library permissions:
+find . -type f -name "*lib*.so*" -exec chmod 755 {} \;
+
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
 sed -i -e '/PrefersNonDefaultGPU/d' %{name}.desktop
 %endif
@@ -134,7 +137,7 @@ sed -i \
 find %{buildroot} -name ".so" -exec chmod 755 {} \;
 find %{buildroot} -name ".so.*" -exec chmod 755 {} \;
 
-chrpath -d %{buildroot}%{_libdir}/%{name}/%{blender_api}/python/lib/python3.10/site-packages/libextern_draco.so
+chrpath -d %{buildroot}%{_libdir}/%{name}/%{blender_api}/python/lib/python3.*/site-packages/libextern_draco.so
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
@@ -167,6 +170,11 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Fri Apr 12 2024 Simone Caronni <negativo17@gmail.com> - 2:4.1.0-1
+- Update to 4.1.0.
+- Make sure Provides/Requires are properly set by setting permissions on
+  libraries before the package is assembled (#9).
+
 * Sat Jan 06 2024 Simone Caronni <negativo17@gmail.com> - 2:4.0.2-1
 - Update to 4.0.2.
 
