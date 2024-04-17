@@ -16,7 +16,7 @@
 Name:       blender
 Epoch:      2
 Version:    %{blender_api}.0
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -62,17 +62,27 @@ BuildArch:      noarch
 This package provides rpm macros to support the creation of third-party addon
 packages to extend Blender.
 
+# Hardware acceleration. Intel (oneAPI, SYCL) is always included as embree is
+# linked into the main executable and it also deals with CPUs.
+# https://docs.blender.org/manual/en/latest/editors/preferences/system.html#cycles-render-device
+
 %package cuda
-Summary:       CUDA support for Blender
+Summary:       Nvidia CUDA support for Blender
 Requires:      %{name} = %{epoch}:%{version}-%{release}
-# It dynamically opens libcuda.so.1
-Requires:      nvidia-driver-cuda-libs%{?_isa}
 # Required to enable autocompilation of kernels
 # Requires:    cuda-nvrtc-devel
 
 %description cuda
-This package contains CUDA support for Blender, to enable rendering on supported
-Nvidia GPUs.
+This package contains CUDA support for Blender, to enable Cycles rendering on
+supported Nvidia GPUs.
+
+%package hip
+Summary:       AMD HIP RT support for Blender
+Requires:      %{name} = %{epoch}:%{version}-%{release}
+
+%description hip
+This package contains ROCm HIP support for Blender, to enable Cycles rendering
+on supported AMD GPUs.
 
 %prep
 %autosetup -p1 -n %{name}-%{version}-linux-x64
@@ -155,21 +165,29 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{_datadir}/mime/packages/%{name}.xml
 %{_datadir}/thumbnailers/%{name}.thumbnailer
 %{_libdir}/%{name}/
-# In the CUDA subpackage
-%exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.cubin
-%exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.ptx
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %{_metainfodir}/%{org}.metainfo.xml
 %endif
 
+# Stuff that goes into the hw acceleration subpackages.
+%exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib
+%exclude %{_libdir}/%{name}/lib/libOpenImageDenoise_device_cuda.so.*
+%exclude %{_libdir}/%{name}/lib/libOpenImageDenoise_device_hip.so.*
+
 %files cuda
-%{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.cubin
-%{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib/*.ptx
+%{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib
+%{_libdir}/%{name}/lib/libOpenImageDenoise_device_cuda.so.*
+
+%files hip
+%{_libdir}/%{name}/lib/libOpenImageDenoise_device_hip.so.*
 
 %files rpm-macros
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Wed Apr 17 2024 Simone Caronni <negativo17@gmail.com> - 2:4.1.0-2
+- Split of AMD ROCm HIP subpackage.
+
 * Fri Apr 12 2024 Simone Caronni <negativo17@gmail.com> - 2:4.1.0-1
 - Update to 4.1.0.
 - Make sure Provides/Requires are properly set by setting permissions on
