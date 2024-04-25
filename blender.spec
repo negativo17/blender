@@ -15,8 +15,8 @@
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}.0
-Release:    2%{?dist}
+Version:    %{blender_api}.1
+Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -185,6 +185,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Apr 25 2024 Simone Caronni <negativo17@gmail.com> - 2:4.1.1-1
+- Update to 4.1.1.
+
 * Wed Apr 17 2024 Simone Caronni <negativo17@gmail.com> - 2:4.1.0-2
 - Split of AMD ROCm HIP subpackage.
 
