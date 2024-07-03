@@ -31,9 +31,7 @@ Source4:    macros.%{name}
 
 BuildRequires:  chrpath
 BuildRequires:  desktop-file-utils
-%if 0%{?fedora} || 0%{?rhel} >= 8
 BuildRequires:  libappstream-glib
-%endif
 BuildRequires:  python3-devel
 
 Requires:       hicolor-icon-theme
@@ -97,7 +95,7 @@ pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
 # Fix all library permissions:
 find . -type f -name "*lib*.so*" -exec chmod 755 {} \;
 
-%if 0%{?rhel} == 7 || 0%{?rhel} == 8
+%if 0%{?rhel} == 8
 sed -i -e '/PrefersNonDefaultGPU/d' %{name}.desktop
 %endif
 
@@ -127,9 +125,7 @@ mkdir -p %{buildroot}%{macrosdir}
 sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE4} > %{buildroot}%{macrosdir}/macros.%{name}
 
 # AppData
-%if 0%{?fedora} || 0%{?rhel} >= 8
 install -p -m 644 -D %{SOURCE2} %{buildroot}%{_metainfodir}/%{org}.metainfo.xml
-%endif
 %if 0%{?rhel} >= 8
 sed -i \
   -e '/type="faq"/d' \
@@ -151,9 +147,7 @@ chrpath -d %{buildroot}%{_libdir}/%{name}/%{blender_api}/python/lib/python3.*/si
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
-%if 0%{?fedora} || 0%{?rhel} >= 8
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainfo.xml
-%endif
 
 %files -f %{name}.lang
 %license *.txt license
@@ -165,9 +159,7 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{_datadir}/mime/packages/%{name}.xml
 %{_datadir}/thumbnailers/%{name}.thumbnailer
 %{_libdir}/%{name}/
-%if 0%{?fedora} || 0%{?rhel} >= 8
 %{_metainfodir}/%{org}.metainfo.xml
-%endif
 
 # Stuff that goes into the hw acceleration subpackages.
 %exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib
