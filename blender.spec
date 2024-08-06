@@ -10,8 +10,8 @@
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
 # Bundled libraries:
-%global __requires_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libvulkan\\.so.*|libusd.*\\.so.*)$
-%global __provides_exclude ^(libsycl\\.so.*|libncursesw\\.so.*|libpanelw\\.so.*|libtinfo\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libtbb\\.so.*|libvulkan\\.so.*|libusd.*\\.so.*)$
+%global __requires_exclude ^(libsycl\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libosl.*\\.so.*|libtbb\\.so.*|libvulkan\\.so.*|libusd.*\\.so.*)$
+%global __provides_exclude ^(libsycl\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libosl.*\\.so.*|libtbb\\.so.*|libvulkan\\.so.*|libusd.*\\.so.*)$
 
 Name:       blender
 Epoch:      2
@@ -160,12 +160,12 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{_metainfodir}/%{org}.metainfo.xml
 
 # Stuff that goes into the hw acceleration subpackages.
-%exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib
+%exclude %{_libdir}/%{name}/%{blender_api}/scripts/addons_core/cycles/lib
 %exclude %{_libdir}/%{name}/lib/libOpenImageDenoise_device_cuda.so.*
 %exclude %{_libdir}/%{name}/lib/libOpenImageDenoise_device_hip.so.*
 
 %files cuda
-%{_libdir}/%{name}/%{blender_api}/scripts/addons/cycles/lib
+%{_libdir}/%{name}/%{blender_api}/scripts/addons_core/cycles/lib
 %{_libdir}/%{name}/lib/libOpenImageDenoise_device_cuda.so.*
 
 %files hip
