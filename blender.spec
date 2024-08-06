@@ -126,7 +126,6 @@ sed -e 's/@VERSION@/%{blender_api}/g' %{SOURCE4} > %{buildroot}%{macrosdir}/macr
 
 # AppData
 install -p -m 644 -D %{SOURCE2} %{buildroot}%{_metainfodir}/%{org}.metainfo.xml
-%if 0%{?rhel} >= 8
 sed -i \
   -e '/type="faq"/d' \
   -e '/type="vcs-browser"/d' \
@@ -134,7 +133,6 @@ sed -i \
   -e '/type="vcs-browser"/d' \
   -e '/type="contribute"/d' \
   %{buildroot}%{_metainfodir}/%{org}.metainfo.xml
-%endif
 
 # Localization
 %find_lang %{name}
