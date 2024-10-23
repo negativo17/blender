@@ -15,7 +15,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    %{blender_api}.2
+Version:    4.2.3
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -175,6 +175,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Wed Oct 23 2024 Simone Caronni <negativo17@gmail.com> - 2:4.2.3-1
+- Update to 4.2.3.
+
 * Thu Sep 26 2024 Simone Caronni <negativo17@gmail.com> - 2:4.2.2-1
 - Update to 4.2.2.
 
