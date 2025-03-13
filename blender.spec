@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 4.2
+%global blender_api 4.3
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -15,7 +15,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    4.2.3
+Version:    4.3.2
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -175,6 +175,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Mar 13 2025 Simone Caronni <negativo17@gmail.com> - 2:4.3.2-1
+- Update to 4.3.2.
+- Trim changelog.
+
 * Wed Oct 23 2024 Simone Caronni <negativo17@gmail.com> - 2:4.2.3-1
 - Update to 4.2.3.
 
@@ -197,111 +201,3 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 
 * Sat Jan 06 2024 Simone Caronni <negativo17@gmail.com> - 2:4.0.2-1
 - Update to 4.0.2.
-
-* Fri Oct 06 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.4-2
-- Filter out provided libraries.
-
-* Fri Oct 06 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.4-1
-- Update to 3.6.4.
-
-* Wed Sep 27 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.3-1
-- Update to 3.6.3.
-
-* Thu Aug 24 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.2-1
-- Update to 3.6.2.
-
-* Thu Jul 20 2023 Simone Caronni <negativo17@gmail.com> - 2:3.6.1-1
-- Update to 3.6.1.
-
-* Fri May 05 2023 Simone Caronni <negativo17@gmail.com> - 2:3.5.1-1
-- Update to 3.5.1.
-
-* Thu Apr 13 2023 Simone Caronni <negativo17@gmail.com> - 2:3.5.0-1
-- Update to 3.5.0.
-
-* Tue Jan 10 2023 Lars R. Damerow <lars@pixar.com> - 2:3.4.1-2
-- Filter out automatic Provides/Requires for libcycles_kernel_oneapi_aot library.
-
-* Wed Dec 21 2022 Simone Caronni <negativo17@gmail.com> - 2:3.4.1-1
-- Update to 3.4.1.
-
-* Thu Dec 15 2022 Simone Caronni <negativo17@gmail.com> - 2:3.4.0-2
-- Fix libraries.
-
-* Tue Dec 13 2022 Simone Caronni <negativo17@gmail.com> - 2:3.4.0-1
-- Update to 3.4.0.
-
-* Tue Nov 15 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.1-2
-- Filter out Ncurses 5 libraries.
-
-* Wed Oct 12 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.1-1
-- Update to 3.3.1.
-
-* Fri Sep 30 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.0-3
-- Make private libraries visible.
-- Trim changelog.
-
-* Thu Sep 29 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.0-2
-- Filter out SYCL library.
-
-* Wed Sep 21 2022 Simone Caronni <negativo17@gmail.com> - 2:3.3.0-1
-- Update to 3.3.0.
-
-* Fri Jul 22 2022 Simone Caronni <negativo17@gmail.com> - 2:3.2.1-1
-- Update to 3.2.1.
-
-* Thu Jun 16 2022 Simone Caronni <negativo17@gmail.com> - 2:3.2.0-1
-- Update to 3.2.0.
-
-* Thu Apr 21 2022 Simone Caronni <negativo17@gmail.com> - 2:3.1.2-1
-- Update to 3.1.2.
-
-* Sun Jan 23 2022 Simone Caronni <negativo17@gmail.com> - 2:3.0.0-2
-- Fix build on RHEL/CentOS 7.
-
-* Sat Jan 22 2022 Simone Caronni <negativo17@gmail.com> - 2:3.0.0-1
-- Update to 3.0.0.
-
-* Thu Nov 18 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.6-1
-- Update to 2.93.6.
-
-* Mon Nov 08 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.5-1
-- Update to 2.93.5.
-
-* Wed Sep 22 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.4-2
-- Do not attempt to strip binaries.
-
-* Wed Sep 01 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.4-1
-- Update to 2.93.4.
-
-* Mon Aug 09 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.2-1
-- Update to 2.93.2.
-
-* Tue Jul 20 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.1-1
-- Update to 2.93.1.
-
-* Thu Jun 03 2021 Simone Caronni <negativo17@gmail.com> - 2:2.93.0-1
-- Update to 2.93.0.
-- Fix icon.
-
-* Wed Mar 10 2021 Simone Caronni <negativo17@gmail.com> - 2:2.92.0-1
-- Update to 2.92.0.
-
-* Wed Jan 27 2021 Simone Caronni <negativo17@gmail.com> - 2:2.91.2-1
-- Update to 2.91.2.
-
-* Sat Nov 28 2020 Simone Caronni <negativo17@gmail.com> - 2:2.91.0-1
-- Update to 2.91.0.
-
-* Tue Oct 06 2020 Simone Caronni <negativo17@gmail.com> - 2:2.90.1-1
-- Update to 2.90.1.
-
-* Sat Sep 05 2020 Simone Caronni <negativo17@gmail.com> - 2:2.90.0-1
-- Switch to release binaries as the depending libraries in Fedora are all at the
-  wrong versions.
-- Update to 2.90.0.
-- Fix build on RHEL/CentOS.
-
-* Tue Aug 25 2020 Simone Caronni <negativo17@gmail.com> - 2:2.83.5-5
-- Merge changes from Fedora.
-- Enable CUDA & OptiX.
