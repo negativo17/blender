@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 4.3
+%global blender_api 4.4
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -15,7 +15,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    4.3.2
+Version:    4.4.0
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -141,7 +141,7 @@ sed -i \
 find %{buildroot} -name ".so" -exec chmod 755 {} \;
 find %{buildroot} -name ".so.*" -exec chmod 755 {} \;
 
-chrpath -d %{buildroot}%{_libdir}/%{name}/%{blender_api}/python/lib/python3.*/site-packages/libextern_draco.so
+chrpath -d %{buildroot}%{_libdir}/%{name}/%{blender_api}/scripts/addons_core/io_scene_gltf2/libextern_draco.so
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
@@ -175,6 +175,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Thu Apr 10 2025 Simone Caronni <negativo17@gmail.com> - 2:4.4.0-1
+- Update to 4.4.0.
+
 * Thu Mar 13 2025 Simone Caronni <negativo17@gmail.com> - 2:4.3.2-1
 - Update to 4.3.2.
 - Trim changelog.
