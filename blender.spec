@@ -85,11 +85,11 @@ on supported AMD GPUs.
 %prep
 %autosetup -p1 -n %{name}-%{version}-linux-x64
 
-# Fix all Python shebangs recursively in .
-%if 0%{?fedora}
-%{__python3} %{_rpmconfigdir}/redhat/pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
-%else
+# Fix all Python shebangs recursively:
+%if 0%{?rhel} == 8 || 0%{?rhel} == 9
 pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
+%else
+%{__python3} %{_rpmconfigdir}/redhat/pathfix.py -pni "%{__python3} %{py3_shbang_opts}" .
 %endif
 
 # Fix all library permissions:
