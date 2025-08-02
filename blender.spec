@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 4.4
+%global blender_api 4.5
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -15,7 +15,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    4.4.0
+Version:    4.5.1
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -175,6 +175,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Sat Aug 02 2025 Simone Caronni <negativo17@gmail.com> - 2:4.5.1-1
+- Update to 4.5.1.
+
 * Thu Apr 10 2025 Simone Caronni <negativo17@gmail.com> - 2:4.4.0-1
 - Update to 4.4.0.
 
