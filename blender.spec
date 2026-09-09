@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 %global __strip /bin/true
 
-%global blender_api 4.5
+%global blender_api 5.2
 %global org org.blender.Blender
 
 # Turn off the brp-python-bytecompile script
@@ -15,7 +15,7 @@
 
 Name:       blender
 Epoch:      2
-Version:    4.5.3
+Version:    5.2.1
 Release:    1%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
@@ -29,7 +29,6 @@ Source2:    https://raw.githubusercontent.com/blender/blender/v%{version}/releas
 Source3:    %{name}.xml
 Source4:    macros.%{name}
 
-BuildRequires:  chrpath
 BuildRequires:  desktop-file-utils
 BuildRequires:  libappstream-glib
 BuildRequires:  python3-devel
@@ -140,8 +139,6 @@ sed -i \
 # rpmlint fixes
 find %{buildroot} -name ".so" -exec chmod 755 {} \;
 find %{buildroot} -name ".so.*" -exec chmod 755 {} \;
-
-chrpath -d %{buildroot}%{_libdir}/%{name}/%{blender_api}/scripts/addons_core/io_scene_gltf2/libextern_draco.so
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
