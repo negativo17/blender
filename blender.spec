@@ -9,14 +9,16 @@
 
 %global macrosdir %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_sysconfdir}/rpm; echo $d)
 
-# Bundled libraries:
-%global __requires_exclude ^(libsycl\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libosl.*\\.so.*|libtbb\\.so.*|libvulkan\\.so.*|libusd.*\\.so.*)$
-%global __provides_exclude ^(libsycl\\.so.*|libcycles_kernel_oneapi_aot\\.so.*|libI.*\\.so.*|libOpen.*\\.so.*|libboost_.*\\.so.*|libembree.*\\.so.*|libopenvdb.*\\.so.*|libosd.*\\.so.*|libosl.*\\.so.*|libtbb\\.so.*|libvulkan\\.so.*|libusd.*\\.so.*)$
+# Bundled libraries, guarded by %%check in case of new libraries.
+%global bundled_libs (libblender_.*|libbf_.*|libboost_.*|libceres|libcycles_.*|libdraco|libembree.*|libhiprt.*|libIex|libIlmThread|libImath|libMaterialX.*|libmeshoptimizer|libopenjph|libOpenColorIO|libOpenEXR.*|libOpenImageDenoise.*|libOpenImageIO.*|libopenvdb|libopenxr_loader|libosd.*|libosl.*|libSDL3|libsycl|libtbb.*|libur_.*|libusd.*|libvulkan|PyMaterialX.*)\\.so.*
+
+%global __provides_exclude_from ^%{_libdir}/blender/.*$
+%global __requires_exclude ^%{bundled_libs}$
 
 Name:       blender
 Epoch:      2
 Version:    5.2.1
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    3D modeling, animation, rendering and post-production
 License:    GPLv2
 URL:        http://www.blender.org
@@ -144,6 +146,22 @@ find %{buildroot} -name ".so.*" -exec chmod 755 {} \;
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainfo.xml
 
+# Assemble list of needed libraries, subtract the provided ones, and error out if something is left untreated:
+(
+    cd %{buildroot}%{_libdir}/%{name}
+    { find . -type f \( -name '*.so' -o -name '*.so.*' \) -printf '%f\n'
+      find . -type f -exec objdump -p {} + 2>/dev/null | awk '/SONAME/ { print $2 }'
+    } | sort -u > %{_builddir}/bundled.list
+    find . -type f -exec objdump -p {} + 2>/dev/null | awk '/NEEDED/ { print $2 }' | sort -u > %{_builddir}/needed.list
+)
+grep -Fxf %{_builddir}/bundled.list %{_builddir}/needed.list \
+    | grep -vE '^%{bundled_libs}$' > %{_builddir}/unfiltered.list || :
+if [ -s %{_builddir}/unfiltered.list ]; then
+    echo "ERROR: bundled libraries missing from %%{bundled_libs}:" >&2
+    cat %{_builddir}/unfiltered.list >&2
+    exit 1
+fi
+
 %files -f %{name}.lang
 %license *.txt license
 %doc readme.html
@@ -172,6 +190,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{org}.metainf
 %{macrosdir}/macros.%{name}
 
 %changelog
+* Fri Sep 11 2026 Simone Caronni <negativo17@gmail.com> - 2:5.2.1-2
+- Filter the bundled libraries out of the provides by directory (#10).
+- Stop filtering libICE and libOpenGL out of the requires.
+
 * Mon Oct 06 2025 Simone Caronni <negativo17@gmail.com> - 2:4.5.3-1
 - Update to 4.5.3.
 
